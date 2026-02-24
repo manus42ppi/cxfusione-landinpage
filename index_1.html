@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CX Fusion – Progressive Publishing Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1a6cc8;
+    --blue-dark: #1558a8;
+    --teal: #2ab5c8;
+    --gradient: linear-gradient(135deg, #1a6cc8 0%, #2ab5c8 100%);
+    --gradient-hero: linear-gradient(160deg, #1a6cc8 0%, #1e8fc4 50%, #2ab5c8 100%);
+    --text: #1a2540;
+    --text-light: #5a6a8a;
+    --bg: #ffffff;
+    --bg-light: #f0f5fb;
+    --bg-section: #f7fafd;
+    --border: #dde6f0;
+    --white: #ffffff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(255,255,255,0.96); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 3rem; height: 70px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: box-shadow 0.3s;
+  }
+  nav.scrolled { box-shadow: 0 4px 24px rgba(26,108,200,0.1); }
+  .logo { display: flex; align-items: center; text-decoration: none; }
+  .logo-text { font-size: 1.35rem; font-weight: 300; color: var(--blue); letter-spacing: 0.1em; }
+  .logo-text strong { font-weight: 700; }
+  .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--text-light); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--blue); }
+  .nav-cta { background: var(--gradient) !important; color: white !important; padding: 0.55rem 1.4rem !important; border-radius: 50px !important; font-weight: 600 !important; }
+  .nav-cta:hover { opacity: 0.9 !important; }
+
+  /* HERO */
+  .hero {
+    background: var(--gradient-hero); min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 100px 2rem 4rem; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(255,255,255,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(42,181,200,0.2) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+    color: white; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em;
+    padding: 0.4rem 1rem; border-radius: 50px; margin-bottom: 2rem;
+  }
+  .hero h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 400; color: white; line-height: 1.2; max-width: 780px; margin-bottom: 0.5rem; }
+  .hero h1 strong { font-weight: 800; display: block; }
+  .hero-sub { font-size: 1.05rem; color: rgba(255,255,255,0.82); max-width: 640px; line-height: 1.75; margin: 1.5rem auto 2.5rem; }
+  .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 4rem; }
+  .btn-hero {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: white; color: var(--blue); padding: 0.85rem 2rem; border-radius: 50px;
+    font-weight: 700; font-size: 0.95rem; text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s; border: 2px solid white;
+  }
+  .btn-hero:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
+  .btn-hero-outline { background: transparent; color: white; border: 2px solid rgba(255,255,255,0.7); }
+  .btn-hero-outline:hover { background: rgba(255,255,255,0.1); }
+
+  /* LAPTOP MOCKUP */
+  .hero-laptop { width: 100%; max-width: 820px; position: relative; z-index: 2; }
+  .laptop-frame { background: #1a1a2e; border-radius: 16px 16px 0 0; padding: 12px 12px 0; box-shadow: 0 40px 100px rgba(0,0,0,0.35); border: 2px solid #2a2a4a; }
+  .laptop-screen { background: white; border-radius: 8px 8px 0 0; overflow: hidden; aspect-ratio: 16/9; display: flex; flex-direction: column; }
+  .screen-bar { background: #f5f7fa; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid #e8ecf0; flex-shrink: 0; }
+  .screen-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .sd1 { background: #ff5f57; } .sd2 { background: #febc2e; } .sd3 { background: #28c840; }
+  .screen-url { flex: 1; background: white; border: 1px solid #dde2e8; border-radius: 4px; padding: 0.2rem 0.6rem; font-size: 0.65rem; color: #8a9ab0; max-width: 300px; margin: 0 auto; }
+  .screen-body { flex: 1; display: grid; grid-template-columns: 52px 1fr 180px; background: #f9fbff; min-height: 0; }
+  .screen-sidebar { background: var(--blue); padding: 0.8rem 0; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
+  .sb-icon { width: 28px; height: 28px; border-radius: 6px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
+  .sb-icon.active { background: rgba(255,255,255,0.3); }
+  .screen-main { padding: 1rem; overflow: hidden; }
+  .screen-title { font-size: 0.75rem; font-weight: 700; color: var(--text); margin-bottom: 0.6rem; }
+  .screen-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; margin-bottom: 0.8rem; }
+  .sc-card { background: white; border-radius: 4px; padding: 0.4rem; border: 1px solid #e8ecf4; }
+  .sc-icon { font-size: 0.8rem; } .sc-label { font-size: 0.45rem; color: #8a9ab0; }
+  .screen-table { background: white; border-radius: 4px; border: 1px solid #e8ecf4; overflow: hidden; }
+  .st-header { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 0.5rem; padding: 0.3rem 0.5rem; background: #f0f5fb; border-bottom: 1px solid #e8ecf4; }
+  .st-col { font-size: 0.4rem; font-weight: 600; color: #8a9ab0; text-transform: uppercase; }
+  .st-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 0.5rem; padding: 0.3rem 0.5rem; border-bottom: 1px solid #f0f4f8; align-items: center; }
+  .st-cell { font-size: 0.42rem; color: #3a4a6a; }
+  .st-badge { font-size: 0.38rem; padding: 0.1rem 0.3rem; border-radius: 3px; font-weight: 600; }
+  .badge-done { background: #e8f5e9; color: #2e7d32; } .badge-review { background: #fff3e0; color: #e65100; } .badge-draft { background: #e8eaf6; color: #3949ab; }
+  .screen-stats { padding: 1rem 0.8rem; border-left: 1px solid #e8ecf4; }
+  .stat-box { background: white; border-radius: 4px; border: 1px solid #e8ecf4; padding: 0.5rem; margin-bottom: 0.5rem; }
+  .stat-box-num { font-size: 0.9rem; font-weight: 700; color: var(--blue); }
+  .stat-box-label { font-size: 0.38rem; color: #8a9ab0; margin-top: 0.1rem; }
+  .mini-chart { display: flex; gap: 2px; align-items: flex-end; height: 30px; margin-top: 0.4rem; }
+  .mc-bar { flex: 1; background: #e8f0fb; border-radius: 1px; } .mc-bar.hi { background: var(--blue); }
+  .laptop-base { background: #1a1a2e; height: 12px; border-radius: 0 0 4px 4px; margin: 0 -2px; border: 2px solid #2a2a4a; border-top: none; }
+  .laptop-stand { width: 120px; height: 8px; background: #111128; margin: 0 auto; border-radius: 0 0 8px 8px; }
+
+  /* LOGOS */
+  .logos-section { background: white; padding: 2.5rem 4rem; border-bottom: 1px solid var(--border); }
+  .logos-label { text-align: center; font-size: 0.8rem; color: var(--text-light); margin-bottom: 1.8rem; }
+  .logos-track { display: flex; justify-content: center; align-items: center; gap: 3rem; flex-wrap: wrap; }
+  .logo-item { font-size: 0.85rem; font-weight: 700; color: #8a9ab0; letter-spacing: 0.05em; transition: color 0.2s; cursor: default; }
+  .logo-item:hover { color: var(--blue); }
+
+  /* SECTIONS */
+  section { padding: 5rem 4rem; }
+  .section-center { text-align: center; }
+  .section-tag { display: inline-block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); margin-bottom: 0.8rem; }
+  h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; color: var(--text); line-height: 1.15; margin-bottom: 0.5rem; }
+  h2 .blue { color: var(--blue); }
+  .section-sub { font-size: 1rem; color: var(--text-light); max-width: 580px; line-height: 1.75; margin: 0 auto 3rem; }
+
+  /* PROBLEMS */
+  .problems { background: var(--bg-section); }
+  .problems-list { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 3rem; }
+  .problem-item { display: grid; grid-template-columns: 200px 1fr; gap: 3rem; align-items: center; }
+  .problem-item:nth-child(even) { direction: rtl; }
+  .problem-item:nth-child(even) > * { direction: ltr; }
+  .problem-visual { background: var(--gradient); border-radius: 16px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; }
+  .problem-title { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 1rem; }
+  .problem-before { background: #fff5f5; border-left: 3px solid #e53935; border-radius: 0 8px 8px 0; padding: 0.8rem 1rem; font-size: 0.9rem; color: var(--text-light); line-height: 1.65; margin-bottom: 0.8rem; }
+  .problem-after { background: #f0f9ff; border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; padding: 0.8rem 1rem; font-size: 0.9rem; color: var(--text); line-height: 1.65; }
+  .problem-after::before { content: '✓ '; color: var(--teal); font-weight: 700; }
+
+  /* FEATURES */
+  .features { background: white; }
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1100px; margin: 0 auto; }
+  .feature-card { background: var(--bg-light); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s; }
+  .feature-card:hover { box-shadow: 0 12px 40px rgba(26,108,200,0.12); transform: translateY(-3px); border-color: var(--blue); }
+  .feature-card.wide { grid-column: span 3; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; background: var(--gradient); border: none; }
+  .feature-icon { width: 48px; height: 48px; background: var(--gradient); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem; }
+  .feature-card.wide .feature-icon { background: rgba(255,255,255,0.2); }
+  .feature-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+  .feature-card.wide .feature-title { color: white; font-size: 1.3rem; }
+  .feature-desc { font-size: 0.88rem; color: var(--text-light); line-height: 1.65; }
+  .feature-card.wide .feature-desc { color: rgba(255,255,255,0.8); font-size: 0.95rem; }
+  .feature-visual-wide { background: rgba(255,255,255,0.1); border-radius: 12px; height: 150px; display: flex; align-items: center; justify-content: center; gap: 1rem; border: 1px solid rgba(255,255,255,0.2); flex-wrap: wrap; padding: 1rem; }
+  .ch-pill { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 50px; padding: 0.5rem 1rem; color: white; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; animation: float2 3s ease-in-out infinite; }
+  .ch-pill:nth-child(2) { animation-delay: 0.7s; } .ch-pill:nth-child(3) { animation-delay: 1.4s; } .ch-pill:nth-child(4) { animation-delay: 2.1s; }
+  @keyframes float2 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+  /* VIDEOS */
+  .videos { background: var(--bg-section); }
+  .videos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1100px; margin: 0 auto; }
+  .video-card { background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: box-shadow 0.25s, transform 0.25s; }
+  .video-card:hover { box-shadow: 0 16px 50px rgba(26,108,200,0.14); transform: translateY(-3px); }
+  .video-thumb { position: relative; aspect-ratio: 16/9; background: var(--gradient); display: flex; align-items: center; justify-content: center; }
+  .play-circle { width: 54px; height: 54px; background: rgba(255,255,255,0.95); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; transition: transform 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+  .video-card:hover .play-circle { transform: scale(1.12); }
+  .play-circle::after { content: ''; border-style: solid; border-width: 8px 0 8px 16px; border-color: transparent transparent transparent var(--blue); margin-left: 4px; }
+  .video-duration { position: absolute; bottom: 0.7rem; right: 0.7rem; background: rgba(0,0,0,0.55); color: white; font-size: 0.7rem; padding: 0.2rem 0.45rem; border-radius: 4px; z-index: 2; }
+  .video-info { padding: 1.2rem; }
+  .video-tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); margin-bottom: 0.4rem; }
+  .video-title { font-size: 0.92rem; font-weight: 600; color: var(--text); line-height: 1.4; }
+
+  /* CALCULATOR */
+  .calculator { background: white; }
+  .calc-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; max-width: 1000px; margin: 0 auto; align-items: start; }
+  .calc-inputs { display: flex; flex-direction: column; gap: 1.8rem; margin-top: 2rem; }
+  .calc-field label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--text); margin-bottom: 0.6rem; }
+  .calc-row { display: flex; align-items: center; gap: 1rem; }
+  .calc-row input[type="range"] { flex: 1; appearance: none; height: 5px; background: var(--border); border-radius: 3px; outline: none; cursor: pointer; }
+  .calc-row input[type="range"]::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--gradient); cursor: pointer; box-shadow: 0 2px 8px rgba(26,108,200,0.4); }
+  .calc-val { min-width: 65px; text-align: right; font-size: 1rem; font-weight: 700; color: var(--blue); }
+  .calc-results { background: var(--gradient); color: white; border-radius: 20px; padding: 2.5rem; position: sticky; top: 90px; box-shadow: 0 20px 60px rgba(26,108,200,0.3); }
+  .calc-results-title { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 2rem; }
+  .result-item { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.15); }
+  .result-item:last-of-type { border: none; margin-bottom: 0; padding-bottom: 0; }
+  .result-label { font-size: 0.82rem; color: rgba(255,255,255,0.65); margin-bottom: 0.3rem; }
+  .result-value { font-size: 2rem; font-weight: 800; color: white; transition: all 0.3s; }
+  .result-value.green { color: #a5f3c8; }
+  .result-sub { font-size: 0.75rem; color: rgba(255,255,255,0.45); margin-top: 0.2rem; }
+  .calc-cta { margin-top: 2rem; }
+  .btn-white { width: 100%; display: block; text-align: center; background: white; color: var(--blue); padding: 0.85rem 1.5rem; border-radius: 50px; font-weight: 700; font-size: 0.9rem; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; }
+  .btn-white:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+
+  /* TESTIMONIALS */
+  .testimonials { background: var(--bg-section); }
+  .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1100px; margin: 0 auto; }
+  .testi-card { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 2rem; transition: box-shadow 0.2s; }
+  .testi-card:hover { box-shadow: 0 8px 30px rgba(26,108,200,0.1); }
+  .stars { color: #f59e0b; font-size: 0.85rem; letter-spacing: 2px; margin-bottom: 1rem; }
+  .testi-quote { font-size: 0.92rem; line-height: 1.72; color: var(--text); margin-bottom: 1.5rem; font-style: italic; }
+  .testi-quote::before { content: '"'; color: var(--blue); font-size: 1.8rem; line-height: 0; vertical-align: -0.5rem; margin-right: 0.2rem; font-style: normal; }
+  .testi-author { display: flex; align-items: center; gap: 0.8rem; }
+  .author-av { width: 42px; height: 42px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+  .author-name { font-weight: 600; font-size: 0.88rem; }
+  .author-co { font-size: 0.77rem; color: var(--text-light); }
+
+  /* CTA FINAL */
+  .cta-final { background: var(--gradient-hero); text-align: center; padding: 6rem 4rem; position: relative; overflow: hidden; }
+  .cta-final::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 100%, rgba(42,181,200,0.3) 0%, transparent 60%); pointer-events: none; }
+  .cta-final h2 { color: white; max-width: 700px; margin: 0 auto 1rem; position: relative; }
+  .cta-final p { color: rgba(255,255,255,0.75); max-width: 500px; margin: 0 auto 2.5rem; line-height: 1.7; position: relative; }
+  .cta-final-btns { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; position: relative; }
+
+  /* FOOTER */
+  footer { background: var(--text); color: rgba(255,255,255,0.5); padding: 2.5rem 4rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; }
+  .footer-logo-text { color: rgba(255,255,255,0.85); font-weight: 700; font-size: 1.1rem; letter-spacing: 0.1em; }
+
+  /* FADE ANIMATIONS */
+  .fade-up { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  .fade-up:nth-child(2) { transition-delay: 0.1s; } .fade-up:nth-child(3) { transition-delay: 0.2s; }
+  .fade-up:nth-child(4) { transition-delay: 0.3s; } .fade-up:nth-child(5) { transition-delay: 0.4s; } .fade-up:nth-child(6) { transition-delay: 0.5s; }
+
+  @media (max-width: 1024px) {
+    nav { padding: 0 1.5rem; } .nav-links { display: none; }
+    section { padding: 4rem 1.5rem; } .logos-section { padding: 2rem 1.5rem; }
+    .problem-item { grid-template-columns: 1fr; } .problem-item:nth-child(even) { direction: ltr; }
+    .features-grid { grid-template-columns: 1fr; } .feature-card.wide { grid-column: span 1; grid-template-columns: 1fr; }
+    .videos-grid, .testimonials-grid { grid-template-columns: 1fr; }
+    .calc-wrapper { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="mainNav">
+  <a href="#" class="logo"><span class="logo-text">CX <strong>FUSION</strong></span></a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#demos">Demos</a></li>
+    <li><a href="#calculator">ROI Calculator</a></li>
+    <li><a href="#testimonials">Customers</a></li>
+    <li><a href="#contact" class="nav-cta">Book a Demo</a></li>
+  </ul>
+</nav>
+
+<section class="hero" id="home">
+  <div class="hero-badge">✦ Progressive Publishing Platform</div>
+  <h1>Your story is more than content.<strong>It's your core asset.</strong></h1>
+  <p class="hero-sub">CX Fusion is the multichannel editorial system that protects your story — bringing planning, editing, print layout, and digital publishing together in a single interface.</p>
+  <div class="hero-btns">
+    <a href="#contact" class="btn-hero">»» For Media Houses</a>
+    <a href="#contact" class="btn-hero btn-hero-outline">»» For Brands</a>
+  </div>
+  <div class="hero-laptop">
+    <div class="laptop-frame">
+      <div class="laptop-screen">
+        <div class="screen-bar">
+          <div class="screen-dot sd1"></div><div class="screen-dot sd2"></div><div class="screen-dot sd3"></div>
+          <div class="screen-url">app.cxfusion.io/dashboard</div>
+        </div>
+        <div class="screen-body">
+          <div class="screen-sidebar">
+            <div class="sb-icon active">📋</div><div class="sb-icon">✏️</div>
+            <div class="sb-icon">🖨</div><div class="sb-icon">🌐</div><div class="sb-icon">📊</div>
+          </div>
+          <div class="screen-main">
+            <div class="screen-title">Dashboard</div>
+            <div class="screen-cards">
+              <div class="sc-card"><div class="sc-icon">📝</div><div class="sc-label">Draft</div></div>
+              <div class="sc-card"><div class="sc-icon">👁</div><div class="sc-label">Review</div></div>
+              <div class="sc-card"><div class="sc-icon">🖨</div><div class="sc-label">Print</div></div>
+              <div class="sc-card"><div class="sc-icon">✅</div><div class="sc-label">Published</div></div>
+            </div>
+            <div class="screen-table">
+              <div class="st-header"><div class="st-col">Article</div><div class="st-col">Author</div><div class="st-col">Date</div><div class="st-col">Status</div></div>
+              <div class="st-row"><div class="st-cell">Feature Story Q1</div><div class="st-cell">M. Weber</div><div class="st-cell">15 Feb</div><div class="st-cell"><span class="st-badge badge-done">Done</span></div></div>
+              <div class="st-row"><div class="st-cell">Annual Review 2025</div><div class="st-cell">T. Müller</div><div class="st-cell">18 Feb</div><div class="st-cell"><span class="st-badge badge-review">Review</span></div></div>
+              <div class="st-row"><div class="st-cell">Digital Strategy</div><div class="st-cell">A. Schmidt</div><div class="st-cell">22 Feb</div><div class="st-cell"><span class="st-badge badge-draft">Draft</span></div></div>
+            </div>
+          </div>
+          <div class="screen-stats">
+            <div class="stat-box"><div class="stat-box-num">2,000</div><div class="stat-box-label">Views 24h</div><div class="mini-chart"><div class="mc-bar" style="height:40%"></div><div class="mc-bar" style="height:60%"></div><div class="mc-bar hi" style="height:80%"></div><div class="mc-bar" style="height:55%"></div><div class="mc-bar hi" style="height:100%"></div></div></div>
+            <div class="stat-box"><div class="stat-box-num">125</div><div class="stat-box-label">Articles/month</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="laptop-base"></div>
+    <div class="laptop-stand"></div>
+  </div>
+</section>
+
+<div class="logos-section">
+  <div class="logos-label">International publishers and brands trust CX Fusion.</div>
+  <div class="logos-track">
+    <div class="logo-item">swissgenetics</div>
+    <div class="logo-item">ROSEBUD editions</div>
+    <div class="logo-item">reiff medien</div>
+    <div class="logo-item">◆ Nomos</div>
+    <div class="logo-item">WESER-KURIER</div>
+    <div class="logo-item">PRINCETON UNIVERSITY</div>
+  </div>
+</div>
+
+<section class="problems" id="problems">
+  <div class="section-center">
+    <div class="section-tag">The Challenge</div>
+    <h2>Where your publishing process gets stuck<br><span class="blue">– and how CX Fusion gets it moving again.</span></h2>
+  </div>
+  <div class="problems-list">
+    <div class="problem-item fade-up">
+      <div class="problem-visual">⚙️</div>
+      <div class="problem-content">
+        <div class="problem-title">🚨 Fragmented Workflows</div>
+        <div class="problem-before">Fragmented workflows destroy value. When stories move between text documents, spreadsheets, layouts, CMS, and emails, clarity gets lost — and with it the impact.</div>
+        <div class="problem-after">CX Fusion empowers your story by uniting all content and processes into seamless workflows, from planning to publication.</div>
+      </div>
+    </div>
+    <div class="problem-item fade-up">
+      <div class="problem-visual">📡</div>
+      <div class="problem-content">
+        <div class="problem-title">🚨 Separated Channels</div>
+        <div class="problem-before">When a story sits in separate silos for print, web, and social media, it loses its clarity, its impact and ultimately its credibility.</div>
+        <div class="problem-after">CX Fusion scales from one core version, ensuring consistency across every format and every audience.</div>
+      </div>
+    </div>
+    <div class="problem-item fade-up">
+      <div class="problem-visual">⏱️</div>
+      <div class="problem-content">
+        <div class="problem-title">🚨 Manual Processes</div>
+        <div class="problem-before">When skilled teams spend their time on copy & paste and layout adjustments, content turns into a cost factor instead of a growth driver.</div>
+        <div class="problem-after">CX Fusion automates time-consuming tasks, enabling your team to create new value instead of compensating for effort.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="section-center">
+    <div class="section-tag">Platform Features</div>
+    <h2>Everything your editorial team needs</h2>
+    <p class="section-sub">From planning to print to digital — CX Fusion covers the entire publishing lifecycle in one unified platform.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card wide fade-up">
+      <div>
+        <div class="feature-icon">🔄</div>
+        <div class="feature-title">Multichannel Publishing</div>
+        <div class="feature-desc">Create content once and distribute it across digital, print, e-paper, and social — with full fidelity. CX Fusion ensures your story stays consistent across every channel and every audience segment, automatically.</div>
+      </div>
+      <div class="feature-visual-wide">
+        <div class="ch-pill">🖨 Print</div>
+        <div class="ch-pill">🌐 Web</div>
+        <div class="ch-pill">📱 Mobile</div>
+        <div class="ch-pill">📧 E-Paper</div>
+      </div>
+    </div>
+    <div class="feature-card fade-up">
+      <div class="feature-icon">✏️</div>
+      <div class="feature-title">Editorial Workflows</div>
+      <div class="feature-desc">Browser-based planning with live overviews and cross-departmental collaboration. Assignments, approvals, deadlines — all in one place.</div>
+    </div>
+    <div class="feature-card fade-up">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">Automated Layout</div>
+      <div class="feature-desc">Powered by Adobe InDesign, CX Fusion's layout engine produces newspaper pages up to 75% faster — without compromising design quality.</div>
+    </div>
+    <div class="feature-card fade-up">
+      <div class="feature-icon">📄</div>
+      <div class="feature-title">E-Paper & Digital Editions</div>
+      <div class="feature-desc">Generate interactive digital editions at the push of a button. Kiosk management, bookmarks, full-text search, and ad server integration included.</div>
+    </div>
+    <div class="feature-card fade-up">
+      <div class="feature-icon">🔗</div>
+      <div class="feature-title">CMS & InDesign Sync</div>
+      <div class="feature-desc">Bidirectional synchronization between your web CMS and Adobe InDesign. Content flows seamlessly, eliminating manual re-entry.</div>
+    </div>
+    <div class="feature-card fade-up">
+      <div class="feature-icon">👥</div>
+      <div class="feature-title">User-Generated Content</div>
+      <div class="feature-desc">Integrate UGC directly into editorial planning. Social media posts, reader submissions, and external contributions flow straight into your workflow.</div>
+    </div>
+  </div>
+</section>
+
+<section class="videos" id="demos">
+  <div class="section-center">
+    <div class="section-tag">Product Demos</div>
+    <h2>See CX Fusion in action</h2>
+    <p class="section-sub">Short demos for each key feature — find exactly what matters to you.</p>
+  </div>
+  <div class="videos-grid">
+    <div class="video-card fade-up" onclick="openVideo('CX Fusion Platform Overview')">
+      <div class="video-thumb"><div class="play-circle"></div><div class="video-duration">2:14</div></div>
+      <div class="video-info"><div class="video-tag">Overview</div><div class="video-title">CX Fusion Platform Overview — How it all fits together</div></div>
+    </div>
+    <div class="video-card fade-up" onclick="openVideo('From story planning to publication')">
+      <div class="video-thumb" style="background:linear-gradient(135deg,#1558a8,#1a8cc8);"><div class="play-circle"></div><div class="video-duration">1:47</div></div>
+      <div class="video-info"><div class="video-tag">Editorial Workflow</div><div class="video-title">From story planning to publication in under 2 minutes</div></div>
+    </div>
+    <div class="video-card fade-up" onclick="openVideo('75% layout automation')">
+      <div class="video-thumb" style="background:linear-gradient(135deg,#1a8cc8,#2ab5c8);"><div class="play-circle"></div><div class="video-duration">3:02</div></div>
+      <div class="video-info"><div class="video-tag">Automated Layout</div><div class="video-title">75% layout automation — WESER-KURIER case study</div></div>
+    </div>
+    <div class="video-card fade-up" onclick="openVideo('Digital editions')">
+      <div class="video-thumb" style="background:linear-gradient(135deg,#2ab5c8,#1a6cc8);"><div class="play-circle"></div><div class="video-duration">1:33</div></div>
+      <div class="video-info"><div class="video-tag">E-Paper</div><div class="video-title">Digital editions at the push of a button</div></div>
+    </div>
+    <div class="video-card fade-up" onclick="openVideo('InDesign CMS Sync')">
+      <div class="video-thumb" style="background:linear-gradient(135deg,#1558a8,#2ab5c8);"><div class="play-circle"></div><div class="video-duration">2:28</div></div>
+      <div class="video-info"><div class="video-tag">CMS Integration</div><div class="video-title">Bidirectional sync between InDesign and your Web CMS</div></div>
+    </div>
+    <div class="video-card fade-up" onclick="openVideo('Brand Communication')">
+      <div class="video-thumb" style="background:linear-gradient(135deg,#1a6cc8,#1a8cc8);"><div class="play-circle"></div><div class="video-duration">1:55</div></div>
+      <div class="video-info"><div class="video-tag">Brand Communication</div><div class="video-title">CX Fusion for Corporate Publishers & Brands</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="calculator" id="calculator">
+  <div class="calc-wrapper">
+    <div>
+      <div class="section-tag">ROI Calculator</div>
+      <h2>What could CX Fusion save your team?</h2>
+      <p style="color:var(--text-light);font-size:0.95rem;line-height:1.7;margin-top:0.5rem;">Adjust the sliders to match your team and see your estimated annual savings with CX Fusion.</p>
+      <div class="calc-inputs">
+        <div class="calc-field"><label>Number of Editors</label><div class="calc-row"><input type="range" id="editors" min="2" max="100" value="15" oninput="calcUpdate()"><div class="calc-val" id="editorsVal">15</div></div></div>
+        <div class="calc-field"><label>Average Hourly Rate (€)</label><div class="calc-row"><input type="range" id="rate" min="20" max="120" value="55" oninput="calcUpdate()"><div class="calc-val" id="rateVal">€55</div></div></div>
+        <div class="calc-field"><label>Hours/Week lost to manual tasks</label><div class="calc-row"><input type="range" id="hours" min="1" max="20" value="8" oninput="calcUpdate()"><div class="calc-val" id="hoursVal">8h</div></div></div>
+        <div class="calc-field"><label>Current Layout Automation (%)</label><div class="calc-row"><input type="range" id="automation" min="0" max="60" value="10" oninput="calcUpdate()"><div class="calc-val" id="automationVal">10%</div></div></div>
+      </div>
+    </div>
+    <div class="calc-results">
+      <div class="calc-results-title">Your Estimated Annual Savings</div>
+      <div class="result-item"><div class="result-label">Time saved per year</div><div class="result-value" id="timeSaved">—</div><div class="result-sub">Editor hours freed up</div></div>
+      <div class="result-item"><div class="result-label">Cost savings per year</div><div class="result-value green" id="costSaved">—</div><div class="result-sub">Based on your hourly rate</div></div>
+      <div class="result-item"><div class="result-label">Layout automation gain</div><div class="result-value" id="layoutGain">—</div><div class="result-sub">Additional automation with CX Fusion</div></div>
+      <div class="result-item"><div class="result-label">Estimated ROI</div><div class="result-value green" id="roi">—</div><div class="result-sub">Return on investment within 12 months</div></div>
+      <div class="calc-cta"><a href="#contact" class="btn-white">Get a personalised quote →</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials" id="testimonials">
+  <div class="section-center">
+    <div class="section-tag">Customer Stories</div>
+    <h2>Trusted by publishers worldwide</h2>
+    <p class="section-sub">See what editorial teams say after switching to CX Fusion.</p>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testi-card fade-up">
+      <div class="stars">★★★★★</div>
+      <div class="testi-quote">CX Fusion has fundamentally changed how we produce our newspaper. The automated layout alone has saved us hundreds of hours every month.</div>
+      <div class="testi-author"><div class="author-av">WK</div><div><div class="author-name">Head of Production</div><div class="author-co">WESER-KURIER</div></div></div>
+    </div>
+    <div class="testi-card fade-up">
+      <div class="stars">★★★★★</div>
+      <div class="testi-quote">Planning, writing, and publishing print and digital from the same interface is a genuine game changer for our editorial workflow.</div>
+      <div class="testi-author"><div class="author-av">NM</div><div><div class="author-name">Editorial Director</div><div class="author-co">Nomos Publishing</div></div></div>
+    </div>
+    <div class="testi-card fade-up">
+      <div class="stars">★★★★★</div>
+      <div class="testi-quote">Onboarding was smooth and the ppi Media team is genuinely helpful. Our content consistency across all channels improved within weeks.</div>
+      <div class="testi-author"><div class="author-av">RM</div><div><div class="author-name">Digital Editor</div><div class="author-co">Reiff Medien</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-final" id="contact">
+  <div class="section-tag" style="color:rgba(255,255,255,0.7);">Get Started</div>
+  <h2>Ready to protect your story?</h2>
+  <p>Book a free, no-obligation demo with one of our publishing experts and discover how CX Fusion can transform your workflows.</p>
+  <div class="cta-final-btns">
+    <a href="https://calendly.com/cxfusion/scheduler-en" target="_blank" class="btn-hero">Book a Free Demo</a>
+    <a href="mailto:cxfusion@ppimedia.de" class="btn-hero btn-hero-outline">Contact Us</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo-text">CX FUSION</div>
+  <div>A solution by ppi Media GmbH · +49 40 227433-670 · cxfusion@ppimedia.de</div>
+  <div>© 2026 CX Fusion. All rights reserved.</div>
+</footer>
+
+<script>
+  window.addEventListener('scroll', () => {
+    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
+  });
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  function openVideo(title) {
+    alert('Demo: "' + title + '"\n\nReplace with your actual YouTube or Vimeo embed link.');
+  }
+
+  function calcUpdate() {
+    const editors = parseInt(document.getElementById('editors').value);
+    const rate = parseInt(document.getElementById('rate').value);
+    const hours = parseInt(document.getElementById('hours').value);
+    const automation = parseInt(document.getElementById('automation').value);
+    document.getElementById('editorsVal').textContent = editors;
+    document.getElementById('rateVal').textContent = '€' + rate;
+    document.getElementById('hoursVal').textContent = hours + 'h';
+    document.getElementById('automationVal').textContent = automation + '%';
+    const hoursPerYear = editors * hours * 48;
+    const savings = hoursPerYear * rate * 0.65;
+    const layoutGain = Math.min(75 - automation, 65);
+    const roi = Math.round((savings / (editors * 200)) * 100);
+    document.getElementById('timeSaved').textContent = hoursPerYear.toLocaleString('de-DE') + ' h';
+    document.getElementById('costSaved').textContent = '€' + Math.round(savings).toLocaleString('de-DE');
+    document.getElementById('layoutGain').textContent = '+' + layoutGain + '%';
+    document.getElementById('roi').textContent = roi + '%';
+  }
+  calcUpdate();
+</script>
+</body>
+</html>
