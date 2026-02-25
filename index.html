@@ -1,517 +1,1441 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CX Fusion – Progressive Publishing Platform</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<title>CX Fusion – Redaktionssystem für modernes Publishing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --blue: #1a6cc8;
-    --blue-dark: #1558a8;
-    --teal: #2ab5c8;
-    --gradient: linear-gradient(135deg, #1a6cc8 0%, #2ab5c8 100%);
-    --gradient-hero: linear-gradient(160deg, #1a6cc8 0%, #1e8fc4 50%, #2ab5c8 100%);
-    --text: #1a2540;
-    --text-light: #5a6a8a;
-    --bg: #ffffff;
-    --bg-light: #f0f5fb;
-    --bg-section: #f7fafd;
-    --border: #dde6f0;
-    --white: #ffffff;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+:root {
+  --blue: #1a6cc8;
+  --blue-dark: #1558a8;
+  --blue-deep: #0f3d7a;
+  --teal: #2ab5c8;
+  --teal-light: #4ecde0;
+  --white: #ffffff;
+  --off-white: #f4f7fc;
+  --text: #0d1b2e;
+  --text-muted: #4a5f7a;
+  --border: rgba(26,108,200,0.12);
+  --grad: linear-gradient(135deg, #0f3d7a 0%, #1a6cc8 50%, #2ab5c8 100%);
+  --grad-soft: linear-gradient(160deg, #e8f1fd 0%, #f0fbfd 100%);
+}
 
-  /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(255,255,255,0.96); backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 3rem; height: 70px;
-    display: flex; align-items: center; justify-content: space-between;
-    transition: box-shadow 0.3s;
-  }
-  nav.scrolled { box-shadow: 0 4px 24px rgba(26,108,200,0.1); }
-  .logo { display: flex; align-items: center; text-decoration: none; }
-  .logo-text { font-size: 1.35rem; font-weight: 300; color: var(--blue); letter-spacing: 0.1em; }
-  .logo-text strong { font-weight: 700; }
-  .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
-  .nav-links a { text-decoration: none; color: var(--text-light); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
-  .nav-links a:hover { color: var(--blue); }
-  .nav-cta { background: var(--gradient) !important; color: white !important; padding: 0.55rem 1.4rem !important; border-radius: 50px !important; font-weight: 600 !important; }
-  .nav-cta:hover { opacity: 0.9 !important; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--white);
+  color: var(--text);
+  overflow-x: hidden;
+}
 
-  /* HERO */
-  .hero {
-    background: var(--gradient-hero); min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; padding: 100px 2rem 4rem; position: relative; overflow: hidden;
-  }
-  .hero::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 30% 50%, rgba(255,255,255,0.08) 0%, transparent 60%),
-                radial-gradient(ellipse at 70% 80%, rgba(42,181,200,0.2) 0%, transparent 50%);
-    pointer-events: none;
-  }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
-    color: white; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em;
-    padding: 0.4rem 1rem; border-radius: 50px; margin-bottom: 2rem;
-  }
-  .hero h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 400; color: white; line-height: 1.2; max-width: 780px; margin-bottom: 0.5rem; }
-  .hero h1 strong { font-weight: 800; display: block; }
-  .hero-sub { font-size: 1.05rem; color: rgba(255,255,255,0.82); max-width: 640px; line-height: 1.75; margin: 1.5rem auto 2.5rem; }
-  .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 4rem; }
-  .btn-hero {
-    display: inline-flex; align-items: center; gap: 0.4rem;
-    background: white; color: var(--blue); padding: 0.85rem 2rem; border-radius: 50px;
-    font-weight: 700; font-size: 0.95rem; text-decoration: none;
-    transition: transform 0.2s, box-shadow 0.2s; border: 2px solid white;
-  }
-  .btn-hero:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
-  .btn-hero-outline { background: transparent; color: white; border: 2px solid rgba(255,255,255,0.7); }
-  .btn-hero-outline:hover { background: rgba(255,255,255,0.1); }
+/* ===== LANG SWITCHER ===== */
+.lang-bar {
+  background: var(--blue-deep);
+  padding: 8px 0;
+  text-align: right;
+}
+.lang-bar .inner { max-width:1200px; margin:0 auto; padding:0 24px; }
+.lang-btn {
+  background: none; border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.7); padding: 3px 12px; border-radius: 4px;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px;
+  letter-spacing: 1px; transition: all .2s; margin-left: 6px;
+}
+.lang-btn.active, .lang-btn:hover {
+  background: var(--teal); border-color: var(--teal); color: #fff;
+}
 
-  /* LAPTOP MOCKUP */
-  .hero-laptop { width: 100%; max-width: 820px; position: relative; z-index: 2; }
-  .laptop-frame { background: #1a1a2e; border-radius: 16px 16px 0 0; padding: 12px 12px 0; box-shadow: 0 40px 100px rgba(0,0,0,0.35); border: 2px solid #2a2a4a; }
-  .laptop-screen { background: white; border-radius: 8px 8px 0 0; overflow: hidden; aspect-ratio: 16/9; display: flex; flex-direction: column; }
-  .screen-bar { background: #f5f7fa; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid #e8ecf0; flex-shrink: 0; }
-  .screen-dot { width: 8px; height: 8px; border-radius: 50%; }
-  .sd1 { background: #ff5f57; } .sd2 { background: #febc2e; } .sd3 { background: #28c840; }
-  .screen-url { flex: 1; background: white; border: 1px solid #dde2e8; border-radius: 4px; padding: 0.2rem 0.6rem; font-size: 0.65rem; color: #8a9ab0; max-width: 300px; margin: 0 auto; }
-  .screen-body { flex: 1; display: grid; grid-template-columns: 52px 1fr 180px; background: #f9fbff; min-height: 0; }
-  .screen-sidebar { background: var(--blue); padding: 0.8rem 0; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
-  .sb-icon { width: 28px; height: 28px; border-radius: 6px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
-  .sb-icon.active { background: rgba(255,255,255,0.3); }
-  .screen-main { padding: 1rem; overflow: hidden; }
-  .screen-title { font-size: 0.75rem; font-weight: 700; color: var(--text); margin-bottom: 0.6rem; }
-  .screen-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; margin-bottom: 0.8rem; }
-  .sc-card { background: white; border-radius: 4px; padding: 0.4rem; border: 1px solid #e8ecf4; }
-  .sc-icon { font-size: 0.8rem; } .sc-label { font-size: 0.45rem; color: #8a9ab0; }
-  .screen-table { background: white; border-radius: 4px; border: 1px solid #e8ecf4; overflow: hidden; }
-  .st-header { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 0.5rem; padding: 0.3rem 0.5rem; background: #f0f5fb; border-bottom: 1px solid #e8ecf4; }
-  .st-col { font-size: 0.4rem; font-weight: 600; color: #8a9ab0; text-transform: uppercase; }
-  .st-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 0.5rem; padding: 0.3rem 0.5rem; border-bottom: 1px solid #f0f4f8; align-items: center; }
-  .st-cell { font-size: 0.42rem; color: #3a4a6a; }
-  .st-badge { font-size: 0.38rem; padding: 0.1rem 0.3rem; border-radius: 3px; font-weight: 600; }
-  .badge-done { background: #e8f5e9; color: #2e7d32; } .badge-review { background: #fff3e0; color: #e65100; } .badge-draft { background: #e8eaf6; color: #3949ab; }
-  .screen-stats { padding: 1rem 0.8rem; border-left: 1px solid #e8ecf4; }
-  .stat-box { background: white; border-radius: 4px; border: 1px solid #e8ecf4; padding: 0.5rem; margin-bottom: 0.5rem; }
-  .stat-box-num { font-size: 0.9rem; font-weight: 700; color: var(--blue); }
-  .stat-box-label { font-size: 0.38rem; color: #8a9ab0; margin-top: 0.1rem; }
-  .mini-chart { display: flex; gap: 2px; align-items: flex-end; height: 30px; margin-top: 0.4rem; }
-  .mc-bar { flex: 1; background: #e8f0fb; border-radius: 1px; } .mc-bar.hi { background: var(--blue); }
-  .laptop-base { background: #1a1a2e; height: 12px; border-radius: 0 0 4px 4px; margin: 0 -2px; border: 2px solid #2a2a4a; border-top: none; }
-  .laptop-stand { width: 120px; height: 8px; background: #111128; margin: 0 auto; border-radius: 0 0 8px 8px; }
+/* ===== NAV ===== */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 68px;
+}
+.logo {
+  font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800;
+  letter-spacing: -0.5px; text-decoration: none; color: var(--text);
+}
+.logo span { color: var(--blue); }
+.nav-cta {
+  background: var(--blue); color: #fff;
+  padding: 10px 24px; border-radius: 6px;
+  font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 14px;
+  text-decoration: none; border: none; cursor: pointer;
+  transition: all .2s; white-space: nowrap;
+}
+.nav-cta:hover { background: var(--blue-dark); transform: translateY(-1px); }
 
-  /* LOGOS */
-  .logos-section { background: white; padding: 2.5rem 4rem; border-bottom: 1px solid var(--border); }
-  .logos-label { text-align: center; font-size: 0.8rem; color: var(--text-light); margin-bottom: 1.8rem; }
-  .logos-track { display: flex; justify-content: center; align-items: center; gap: 3rem; flex-wrap: wrap; }
-  .logo-item { font-size: 0.85rem; font-weight: 700; color: #8a9ab0; letter-spacing: 0.05em; transition: color 0.2s; cursor: default; }
-  .logo-item:hover { color: var(--blue); }
+/* ===== HERO ===== */
+.hero {
+  background: var(--grad);
+  padding: 100px 24px 0;
+  overflow: hidden;
+  position: relative;
+  min-height: 92vh;
+  display: flex; flex-direction: column; align-items: center;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.9);
+  padding: 6px 16px; border-radius: 100px; font-size: 13px;
+  letter-spacing: 0.5px; margin-bottom: 32px;
+  animation: fadeDown .8s ease both;
+}
+.hero-badge::before { content:'✦'; color: var(--teal-light); }
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(38px, 6vw, 82px);
+  font-weight: 800; line-height: 1.05;
+  color: #fff; text-align: center;
+  max-width: 900px;
+  animation: fadeUp .8s .1s ease both;
+}
+.hero h1 em { font-style: normal; color: var(--teal-light); }
+.hero-sub {
+  font-size: clamp(16px, 2vw, 20px);
+  color: rgba(255,255,255,0.8);
+  max-width: 600px; text-align: center; line-height: 1.6;
+  margin: 24px 0 48px;
+  animation: fadeUp .8s .2s ease both;
+}
 
-  /* SECTIONS */
-  section { padding: 5rem 4rem; }
-  .section-center { text-align: center; }
-  .section-tag { display: inline-block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); margin-bottom: 0.8rem; }
-  h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; color: var(--text); line-height: 1.15; margin-bottom: 0.5rem; }
-  h2 .blue { color: var(--blue); }
-  .section-sub { font-size: 1rem; color: var(--text-light); max-width: 580px; line-height: 1.75; margin: 0 auto 3rem; }
+/* HERO EMAIL FORM */
+.hero-form {
+  width: 100%; max-width: 540px;
+  animation: fadeUp .8s .3s ease both;
+  margin-bottom: 16px;
+}
+.hero-form-inner {
+  display: flex; gap: 0;
+  background: rgba(255,255,255,0.12);
+  border: 1.5px solid rgba(255,255,255,0.3);
+  border-radius: 10px; overflow: hidden;
+  backdrop-filter: blur(8px);
+  transition: border-color .2s;
+}
+.hero-form-inner:focus-within { border-color: var(--teal-light); }
+.hero-form input[type=email] {
+  flex: 1; background: none; border: none; outline: none;
+  padding: 16px 20px; font-size: 15px;
+  color: #fff; font-family: 'DM Sans', sans-serif;
+}
+.hero-form input::placeholder { color: rgba(255,255,255,0.5); }
+.hero-form button {
+  background: var(--teal); border: none; padding: 16px 28px;
+  color: #fff; font-weight: 600; font-size: 15px; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; white-space: nowrap;
+  transition: background .2s;
+}
+.hero-form button:hover { background: var(--teal-light); }
+.hero-form-note {
+  color: rgba(255,255,255,0.55); font-size: 12px;
+  text-align: center; margin-bottom: 60px;
+  animation: fadeUp .8s .35s ease both;
+}
 
-  /* PROBLEMS */
-  .problems { background: var(--bg-section); }
-  .problems-list { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 3rem; }
-  .problem-item { display: grid; grid-template-columns: 200px 1fr; gap: 3rem; align-items: center; }
-  .problem-item:nth-child(even) { direction: rtl; }
-  .problem-item:nth-child(even) > * { direction: ltr; }
-  .problem-visual { background: var(--gradient); border-radius: 16px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; }
-  .problem-title { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 1rem; }
-  .problem-before { background: #fff5f5; border-left: 3px solid #e53935; border-radius: 0 8px 8px 0; padding: 0.8rem 1rem; font-size: 0.9rem; color: var(--text-light); line-height: 1.65; margin-bottom: 0.8rem; }
-  .problem-after { background: #f0f9ff; border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; padding: 0.8rem 1rem; font-size: 0.9rem; color: var(--text); line-height: 1.65; }
-  .problem-after::before { content: '✓ '; color: var(--teal); font-weight: 700; }
+/* HERO STATS */
+.hero-stats {
+  display: flex; gap: 48px; flex-wrap: wrap; justify-content: center;
+  margin-bottom: 60px;
+  animation: fadeUp .8s .4s ease both;
+}
+.hero-stat { text-align: center; }
+.hero-stat .num {
+  font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800;
+  color: #fff; line-height: 1;
+}
+.hero-stat .num span { color: var(--teal-light); }
+.hero-stat .label {
+  color: rgba(255,255,255,0.65); font-size: 13px; margin-top: 4px;
+}
 
-  /* FEATURES */
-  .features { background: white; }
-  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1100px; margin: 0 auto; }
-  .feature-card { background: var(--bg-light); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s; }
-  .feature-card:hover { box-shadow: 0 12px 40px rgba(26,108,200,0.12); transform: translateY(-3px); border-color: var(--blue); }
-  .feature-card.wide { grid-column: span 3; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; background: var(--gradient); border: none; }
-  .feature-icon { width: 48px; height: 48px; background: var(--gradient); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem; }
-  .feature-card.wide .feature-icon { background: rgba(255,255,255,0.2); }
-  .feature-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
-  .feature-card.wide .feature-title { color: white; font-size: 1.3rem; }
-  .feature-desc { font-size: 0.88rem; color: var(--text-light); line-height: 1.65; }
-  .feature-card.wide .feature-desc { color: rgba(255,255,255,0.8); font-size: 0.95rem; }
-  .feature-visual-wide { background: rgba(255,255,255,0.1); border-radius: 12px; height: 150px; display: flex; align-items: center; justify-content: center; gap: 1rem; border: 1px solid rgba(255,255,255,0.2); flex-wrap: wrap; padding: 1rem; }
-  .ch-pill { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 50px; padding: 0.5rem 1rem; color: white; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; animation: float2 3s ease-in-out infinite; }
-  .ch-pill:nth-child(2) { animation-delay: 0.7s; } .ch-pill:nth-child(3) { animation-delay: 1.4s; } .ch-pill:nth-child(4) { animation-delay: 2.1s; }
-  @keyframes float2 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+/* HERO DASHBOARD MOCKUP */
+.hero-mockup {
+  width: 100%; max-width: 900px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+  animation: fadeUp .8s .5s ease both;
+  box-shadow: 0 40px 120px rgba(0,0,0,0.3);
+}
+.mockup-bar {
+  background: rgba(255,255,255,0.1);
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
+.mockup-dot:nth-child(1) { background: #ff5f57; }
+.mockup-dot:nth-child(2) { background: #febc2e; }
+.mockup-dot:nth-child(3) { background: #28c840; }
+.mockup-url {
+  flex: 1; background: rgba(255,255,255,0.08);
+  border-radius: 4px; padding: 4px 12px;
+  font-size: 12px; color: rgba(255,255,255,0.5);
+  text-align: center; margin: 0 8px;
+}
+.mockup-content {
+  padding: 24px;
+  display: grid; grid-template-columns: 200px 1fr;
+  gap: 16px; min-height: 260px;
+}
+.mockup-sidebar {
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px; padding: 16px;
+}
+.mockup-nav-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; border-radius: 6px; margin-bottom: 4px;
+  font-size: 12px; color: rgba(255,255,255,0.6);
+}
+.mockup-nav-item.active {
+  background: rgba(42,181,200,0.2); color: var(--teal-light);
+}
+.mockup-nav-icon { font-size: 14px; }
+.mockup-main { display: flex; flex-direction: column; gap: 12px; }
+.mockup-card {
+  background: rgba(255,255,255,0.07);
+  border-radius: 8px; padding: 14px 16px;
+  animation: pulse-card 3s ease-in-out infinite;
+}
+.mockup-card-header {
+  font-size: 11px; color: rgba(255,255,255,0.5);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+}
+.mockup-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 12px; color: rgba(255,255,255,0.75);
+}
+.mockup-tag {
+  padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600;
+}
+.tag-done { background: rgba(40,200,120,0.2); color: #28c878; }
+.tag-review { background: rgba(254,188,46,0.2); color: #febc2e; }
+.tag-draft { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); }
 
-  /* VIDEOS */
-  .videos { background: var(--bg-section); }
-  .videos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1100px; margin: 0 auto; }
-  .video-card { background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: box-shadow 0.25s, transform 0.25s; }
-  .video-card:hover { box-shadow: 0 16px 50px rgba(26,108,200,0.14); transform: translateY(-3px); }
-  .video-thumb { position: relative; aspect-ratio: 16/9; background: var(--gradient); display: flex; align-items: center; justify-content: center; }
-  .play-circle { width: 54px; height: 54px; background: rgba(255,255,255,0.95); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; transition: transform 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
-  .video-card:hover .play-circle { transform: scale(1.12); }
-  .play-circle::after { content: ''; border-style: solid; border-width: 8px 0 8px 16px; border-color: transparent transparent transparent var(--blue); margin-left: 4px; }
-  .video-duration { position: absolute; bottom: 0.7rem; right: 0.7rem; background: rgba(0,0,0,0.55); color: white; font-size: 0.7rem; padding: 0.2rem 0.45rem; border-radius: 4px; z-index: 2; }
-  .video-info { padding: 1.2rem; }
-  .video-tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); margin-bottom: 0.4rem; }
-  .video-title { font-size: 0.92rem; font-weight: 600; color: var(--text); line-height: 1.4; }
+@keyframes pulse-card {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
 
-  /* CALCULATOR */
-  .calculator { background: white; }
-  .calc-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; max-width: 1000px; margin: 0 auto; align-items: start; }
-  .calc-inputs { display: flex; flex-direction: column; gap: 1.8rem; margin-top: 2rem; }
-  .calc-field label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--text); margin-bottom: 0.6rem; }
-  .calc-row { display: flex; align-items: center; gap: 1rem; }
-  .calc-row input[type="range"] { flex: 1; appearance: none; height: 5px; background: var(--border); border-radius: 3px; outline: none; cursor: pointer; }
-  .calc-row input[type="range"]::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--gradient); cursor: pointer; box-shadow: 0 2px 8px rgba(26,108,200,0.4); }
-  .calc-val { min-width: 65px; text-align: right; font-size: 1rem; font-weight: 700; color: var(--blue); }
-  .calc-results { background: var(--gradient); color: white; border-radius: 20px; padding: 2.5rem; position: sticky; top: 90px; box-shadow: 0 20px 60px rgba(26,108,200,0.3); }
-  .calc-results-title { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 2rem; }
-  .result-item { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.15); }
-  .result-item:last-of-type { border: none; margin-bottom: 0; padding-bottom: 0; }
-  .result-label { font-size: 0.82rem; color: rgba(255,255,255,0.65); margin-bottom: 0.3rem; }
-  .result-value { font-size: 2rem; font-weight: 800; color: white; transition: all 0.3s; }
-  .result-value.green { color: #a5f3c8; }
-  .result-sub { font-size: 0.75rem; color: rgba(255,255,255,0.45); margin-top: 0.2rem; }
-  .calc-cta { margin-top: 2rem; }
-  .btn-white { width: 100%; display: block; text-align: center; background: white; color: var(--blue); padding: 0.85rem 1.5rem; border-radius: 50px; font-weight: 700; font-size: 0.9rem; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; }
-  .btn-white:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+/* ===== LOGOS ===== */
+.logos-section {
+  padding: 40px 24px;
+  background: var(--off-white);
+  border-bottom: 1px solid var(--border);
+}
+.logos-inner { max-width: 1100px; margin: 0 auto; text-align: center; }
+.logos-label {
+  font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 24px;
+}
+.logos-track {
+  display: flex; align-items: center; justify-content: center;
+  gap: 40px; flex-wrap: wrap;
+}
+.logo-item {
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 14px; letter-spacing: 1px; color: #bcc8d8;
+  text-transform: uppercase; white-space: nowrap;
+  transition: color .2s;
+}
+.logo-item:hover { color: var(--blue); }
 
-  /* TESTIMONIALS */
-  .testimonials { background: var(--bg-section); }
-  .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1100px; margin: 0 auto; }
-  .testi-card { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 2rem; transition: box-shadow 0.2s; }
-  .testi-card:hover { box-shadow: 0 8px 30px rgba(26,108,200,0.1); }
-  .stars { color: #f59e0b; font-size: 0.85rem; letter-spacing: 2px; margin-bottom: 1rem; }
-  .testi-quote { font-size: 0.92rem; line-height: 1.72; color: var(--text); margin-bottom: 1.5rem; font-style: italic; }
-  .testi-quote::before { content: '"'; color: var(--blue); font-size: 1.8rem; line-height: 0; vertical-align: -0.5rem; margin-right: 0.2rem; font-style: normal; }
-  .testi-author { display: flex; align-items: center; gap: 0.8rem; }
-  .author-av { width: 42px; height: 42px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
-  .author-name { font-weight: 600; font-size: 0.88rem; }
-  .author-co { font-size: 0.77rem; color: var(--text-light); }
+/* ===== SECTIONS ===== */
+.section { padding: 100px 24px; }
+.section-inner { max-width: 1160px; margin: 0 auto; }
+.section-label {
+  font-size: 12px; letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--teal); font-weight: 600; margin-bottom: 16px;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight: 800; line-height: 1.1;
+  color: var(--text); max-width: 700px;
+}
+.section-title em { font-style: normal; color: var(--blue); }
+.section-sub {
+  font-size: 17px; color: var(--text-muted); line-height: 1.7;
+  max-width: 560px; margin-top: 16px;
+}
 
-  /* CTA FINAL */
-  .cta-final { background: var(--gradient-hero); text-align: center; padding: 6rem 4rem; position: relative; overflow: hidden; }
-  .cta-final::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 100%, rgba(42,181,200,0.3) 0%, transparent 60%); pointer-events: none; }
-  .cta-final h2 { color: white; max-width: 700px; margin: 0 auto 1rem; position: relative; }
-  .cta-final p { color: rgba(255,255,255,0.75); max-width: 500px; margin: 0 auto 2.5rem; line-height: 1.7; position: relative; }
-  .cta-final-btns { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; position: relative; }
+/* ===== PROBLEM/SOLUTION ANIMATED ===== */
+.problems-section { background: var(--off-white); }
+.problems-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px; margin-top: 60px;
+}
+.problem-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 32px;
+  position: relative; overflow: hidden;
+  transition: transform .3s, box-shadow .3s;
+}
+.problem-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(26,108,200,0.1);
+}
+.problem-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--grad);
+}
+.problem-icon {
+  width: 56px; height: 56px; border-radius: 14px;
+  background: linear-gradient(135deg, rgba(26,108,200,0.1), rgba(42,181,200,0.1));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; margin-bottom: 20px;
+}
+.problem-title {
+  font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700;
+  margin-bottom: 10px; color: var(--text);
+}
+.problem-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
+.problem-solution {
+  font-size: 13px; color: var(--blue); font-weight: 500;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.problem-solution::before { content: '✓'; color: var(--teal); font-weight: 700; flex-shrink: 0; }
 
-  /* FOOTER */
-  footer { background: var(--text); color: rgba(255,255,255,0.5); padding: 2.5rem 4rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; }
-  .footer-logo-text { color: rgba(255,255,255,0.85); font-weight: 700; font-size: 1.1rem; letter-spacing: 0.1em; }
+/* ===== ANIMATED WORKFLOW INFOGRAPHIC ===== */
+.workflow-section { background: var(--white); }
+.workflow-visual {
+  margin-top: 60px;
+  background: linear-gradient(135deg, var(--blue-deep) 0%, var(--blue) 60%, var(--teal) 100%);
+  border-radius: 24px; padding: 60px 48px;
+  position: relative; overflow: hidden;
+}
+.workflow-visual::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/svg%3E");
+}
+.workflow-steps {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 0; position: relative; z-index: 1;
+}
+.workflow-step { text-align: center; position: relative; }
+.workflow-step:not(:last-child)::after {
+  content: '';
+  position: absolute; top: 36px; left: 60%; width: 80%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1));
+  animation: flow-line 2s ease-in-out infinite;
+}
+@keyframes flow-line {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+.workflow-icon-wrap {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  border: 2px solid rgba(255,255,255,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; margin: 0 auto 16px;
+  transition: all .3s;
+  animation: float-icon 3s ease-in-out infinite;
+}
+.workflow-step:nth-child(2) .workflow-icon-wrap { animation-delay: .4s; }
+.workflow-step:nth-child(3) .workflow-icon-wrap { animation-delay: .8s; }
+.workflow-step:nth-child(4) .workflow-icon-wrap { animation-delay: 1.2s; }
+.workflow-step:nth-child(5) .workflow-icon-wrap { animation-delay: 1.6s; }
+@keyframes float-icon {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.workflow-icon-wrap:hover {
+  background: rgba(255,255,255,0.25);
+  transform: scale(1.1) !important;
+}
+.workflow-label {
+  font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+  color: #fff; margin-bottom: 6px;
+}
+.workflow-desc { font-size: 11px; color: rgba(255,255,255,0.65); line-height: 1.4; }
 
-  /* FADE ANIMATIONS */
-  .fade-up { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s ease; }
-  .fade-up.visible { opacity: 1; transform: translateY(0); }
-  .fade-up:nth-child(2) { transition-delay: 0.1s; } .fade-up:nth-child(3) { transition-delay: 0.2s; }
-  .fade-up:nth-child(4) { transition-delay: 0.3s; } .fade-up:nth-child(5) { transition-delay: 0.4s; } .fade-up:nth-child(6) { transition-delay: 0.5s; }
+/* ===== FEATURES SPLIT ===== */
+.features-split {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center; margin-top: 80px;
+}
+.features-split.reverse { direction: rtl; }
+.features-split.reverse > * { direction: ltr; }
+.feature-visual {
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 30px 80px rgba(26,108,200,0.15);
+  position: relative;
+}
+.feature-mockup {
+  background: linear-gradient(135deg, #0f3d7a, #1a6cc8);
+  padding: 32px; min-height: 320px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.feature-card-sim {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px; padding: 16px;
+  animation: slide-in .5s ease both;
+}
+.sim-header { font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.sim-bar {
+  height: 8px; border-radius: 4px;
+  background: rgba(255,255,255,0.1);
+  margin-bottom: 6px; overflow: hidden; position: relative;
+}
+.sim-bar-fill {
+  height: 100%; border-radius: 4px;
+  background: linear-gradient(90deg, var(--teal), var(--teal-light));
+  animation: fill-bar 2s ease-in-out infinite alternate;
+}
+@keyframes fill-bar {
+  from { width: 40%; }
+  to { width: 85%; }
+}
+.sim-bar-fill.b { animation-delay: .3s; }
+.sim-bar-fill.c { animation-delay: .6s; }
+.feature-list { list-style: none; margin-top: 24px; }
+.feature-list li {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+  font-size: 15px; color: var(--text-muted); line-height: 1.5;
+}
+.feature-list li:last-child { border: none; }
+.feature-check {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--teal));
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 11px; flex-shrink: 0; margin-top: 2px;
+}
 
-  @media (max-width: 1024px) {
-    nav { padding: 0 1.5rem; } .nav-links { display: none; }
-    section { padding: 4rem 1.5rem; } .logos-section { padding: 2rem 1.5rem; }
-    .problem-item { grid-template-columns: 1fr; } .problem-item:nth-child(even) { direction: ltr; }
-    .features-grid { grid-template-columns: 1fr; } .feature-card.wide { grid-column: span 1; grid-template-columns: 1fr; }
-    .videos-grid, .testimonials-grid { grid-template-columns: 1fr; }
-    .calc-wrapper { grid-template-columns: 1fr; }
-    footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem 1.5rem; }
-  }
+/* ===== PRINT SECTION ===== */
+.print-section { background: var(--off-white); }
+.print-visual {
+  margin-top: 60px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 32px; align-items: start;
+}
+.print-mockup {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+}
+.print-header-bar {
+  background: var(--grad); padding: 12px 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.print-header-title { color: #fff; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; }
+.print-pages {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; padding: 16px;
+}
+.print-page {
+  background: var(--off-white);
+  border-radius: 6px; aspect-ratio: 0.7;
+  display: flex; flex-direction: column;
+  overflow: hidden; position: relative;
+  border: 1px solid var(--border);
+  transition: transform .3s;
+}
+.print-page:hover { transform: scale(1.03); }
+.print-page-header {
+  height: 20%; background: var(--grad);
+}
+.print-page-content { flex: 1; padding: 8px; }
+.print-line {
+  height: 4px; border-radius: 2px; background: rgba(26,108,200,0.15);
+  margin-bottom: 4px; animation: page-load 1.5s ease-in-out infinite alternate;
+}
+.print-line:nth-child(2) { width: 80%; animation-delay: .2s; }
+.print-line:nth-child(3) { width: 60%; animation-delay: .4s; }
+@keyframes page-load {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
+.print-stats {
+  display: flex; flex-direction: column; gap: 16px;
+}
+.print-stat-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 24px;
+  display: flex; align-items: center; gap: 20px;
+  transition: transform .3s, box-shadow .3s;
+}
+.print-stat-card:hover {
+  transform: translateX(6px);
+  box-shadow: 0 10px 40px rgba(26,108,200,0.1);
+}
+.print-stat-icon {
+  width: 52px; height: 52px; border-radius: 12px;
+  background: linear-gradient(135deg, rgba(26,108,200,0.1), rgba(42,181,200,0.1));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.print-stat-num {
+  font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800;
+  color: var(--blue); line-height: 1;
+}
+.print-stat-label { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+/* ===== COMPARISON TABLE ===== */
+.compare-section { background: var(--white); }
+.compare-table {
+  margin-top: 60px; width: 100%;
+  border-radius: 16px; overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.06);
+}
+.compare-header {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  background: var(--grad); padding: 20px 28px;
+}
+.compare-col-head {
+  font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+  color: rgba(255,255,255,0.8); text-align: center;
+}
+.compare-col-head:first-child { text-align: left; color: rgba(255,255,255,0.6); }
+.compare-col-head.highlight { color: #fff; }
+.compare-row {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: 16px 28px; border-bottom: 1px solid var(--border);
+  align-items: center; transition: background .2s;
+}
+.compare-row:last-child { border: none; }
+.compare-row:hover { background: rgba(26,108,200,0.03); }
+.compare-feature { font-size: 14px; color: var(--text); font-weight: 500; }
+.compare-cell { text-align: center; font-size: 18px; }
+.compare-cell.cx { color: var(--teal); }
+.compare-cell.no { color: #ddd; }
+
+/* ===== LEAD SECTION ===== */
+.lead-section {
+  background: var(--grad);
+  padding: 100px 24px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.lead-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(42,181,200,0.3) 0%, transparent 60%);
+}
+.lead-inner { max-width: 680px; margin: 0 auto; position: relative; z-index: 1; }
+.lead-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(32px, 5vw, 60px);
+  font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 20px;
+}
+.lead-sub { font-size: 18px; color: rgba(255,255,255,0.75); line-height: 1.6; margin-bottom: 48px; }
+.lead-form {
+  display: flex; gap: 0; max-width: 480px; margin: 0 auto 16px;
+  background: rgba(255,255,255,0.12);
+  border: 1.5px solid rgba(255,255,255,0.3);
+  border-radius: 10px; overflow: hidden;
+}
+.lead-form:focus-within { border-color: var(--teal-light); }
+.lead-form input {
+  flex: 1; background: none; border: none; outline: none;
+  padding: 16px 20px; color: #fff; font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+}
+.lead-form input::placeholder { color: rgba(255,255,255,0.5); }
+.lead-form button {
+  background: #fff; border: none; padding: 16px 28px;
+  color: var(--blue); font-weight: 700; font-size: 15px;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all .2s; white-space: nowrap;
+}
+.lead-form button:hover { background: var(--teal-light); color: #fff; }
+.lead-note { color: rgba(255,255,255,0.5); font-size: 12px; }
+.lead-logos {
+  display: flex; align-items: center; justify-content: center;
+  gap: 32px; flex-wrap: wrap; margin-top: 56px;
+  padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1);
+}
+.lead-logo-label { font-size: 12px; color: rgba(255,255,255,0.5); letter-spacing: 1px; text-transform: uppercase; }
+.lead-logo-item {
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px;
+  color: rgba(255,255,255,0.4); letter-spacing: 1px; text-transform: uppercase;
+}
+
+/* ===== TESTIMONIALS ===== */
+.testimonials-section { background: var(--off-white); }
+.testimonials-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 24px; margin-top: 60px;
+}
+.testimonial-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px;
+  transition: transform .3s, box-shadow .3s;
+}
+.testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(26,108,200,0.1);
+}
+.testimonial-stars { color: var(--teal); font-size: 14px; margin-bottom: 16px; }
+.testimonial-text {
+  font-size: 14px; color: var(--text-muted);
+  line-height: 1.7; margin-bottom: 20px;
+  font-style: italic;
+}
+.testimonial-text::before { content: '"'; color: var(--blue); font-size: 24px; font-family: 'Syne', sans-serif; }
+.testimonial-author { font-weight: 600; font-size: 14px; color: var(--text); }
+.testimonial-role { font-size: 12px; color: var(--text-muted); }
+
+/* ===== FAQ ===== */
+.faq-section { background: var(--white); }
+.faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 60px; }
+.faq-item {
+  border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+}
+.faq-question {
+  padding: 20px 24px; font-weight: 600; font-size: 15px;
+  cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+  transition: background .2s; user-select: none;
+}
+.faq-question:hover { background: var(--off-white); }
+.faq-arrow { transition: transform .3s; color: var(--blue); font-size: 12px; }
+.faq-answer {
+  max-height: 0; overflow: hidden;
+  transition: max-height .3s ease, padding .3s ease;
+}
+.faq-answer-inner { padding: 0 24px 20px; font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+.faq-item.open .faq-arrow { transform: rotate(180deg); }
+.faq-item.open .faq-answer { max-height: 200px; }
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--blue-deep);
+  padding: 60px 24px 32px;
+  color: rgba(255,255,255,0.6);
+}
+.footer-inner { max-width: 1160px; margin: 0 auto; }
+.footer-top {
+  display: grid; grid-template-columns: 2fr 1fr 1fr;
+  gap: 60px; margin-bottom: 48px;
+}
+.footer-logo {
+  font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800;
+  color: #fff; margin-bottom: 12px;
+}
+.footer-logo span { color: var(--teal); }
+.footer-desc { font-size: 13px; line-height: 1.7; max-width: 280px; }
+.footer-col h4 {
+  font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
+  color: rgba(255,255,255,0.9); letter-spacing: 1.5px; text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.footer-col a {
+  display: block; color: rgba(255,255,255,0.5); font-size: 13px;
+  text-decoration: none; margin-bottom: 10px; transition: color .2s;
+}
+.footer-col a:hover { color: var(--teal); }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 24px; display: flex; justify-content: space-between;
+  align-items: center; font-size: 12px;
+}
+
+/* ===== SUCCESS MESSAGE ===== */
+.success-msg {
+  display: none;
+  background: rgba(42,181,200,0.15);
+  border: 1px solid var(--teal);
+  color: var(--teal-light);
+  padding: 12px 20px; border-radius: 8px;
+  font-size: 14px; text-align: center; margin-top: 12px;
+}
+.success-msg.show { display: block; animation: fadeUp .4s ease; }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.reveal {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: .1s; }
+.reveal-delay-2 { transition-delay: .2s; }
+.reveal-delay-3 { transition-delay: .3s; }
+
+/* ===== ADMIN LINK ===== */
+.admin-link {
+  position: fixed; bottom: 20px; right: 20px; z-index: 999;
+  background: rgba(15,61,122,0.9); color: rgba(255,255,255,0.5);
+  padding: 8px 14px; border-radius: 6px; font-size: 11px;
+  text-decoration: none; backdrop-filter: blur(8px);
+  transition: all .2s; letter-spacing: 0.5px;
+}
+.admin-link:hover { color: #fff; background: var(--blue-deep); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .problems-grid { grid-template-columns: 1fr; }
+  .workflow-steps { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .workflow-step:nth-child(3)::after { display: none; }
+  .features-split { grid-template-columns: 1fr; gap: 40px; }
+  .features-split.reverse { direction: ltr; }
+  .print-visual { grid-template-columns: 1fr; }
+  .compare-header, .compare-row { grid-template-columns: 2fr 1fr 1fr; }
+  .compare-header > *:last-child, .compare-row > *:last-child { display: none; }
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .faq-grid { grid-template-columns: 1fr; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  .footer-top > *:first-child { grid-column: 1 / -1; }
+}
+@media (max-width: 600px) {
+  .hero { padding: 70px 20px 0; }
+  .hero-stats { gap: 24px; }
+  .hero-form-inner { flex-direction: column; border-radius: 10px; }
+  .hero-form input[type=email], .hero-form button { width: 100%; border-radius: 0; }
+  .hero-form button { border-radius: 0 0 8px 8px; }
+  .mockup-content { grid-template-columns: 1fr; }
+  .mockup-sidebar { display: none; }
+  .workflow-steps { grid-template-columns: 1fr 1fr; }
+  .workflow-step:nth-child(2)::after { display: none; }
+  .nav-inner .nav-cta { font-size: 13px; padding: 8px 16px; }
+  .footer-top { grid-template-columns: 1fr; gap: 32px; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+  .lead-form { flex-direction: column; }
+  .lead-form button { border-radius: 0 0 8px 8px; }
+}
 </style>
 </head>
 <body>
 
-<nav id="mainNav">
-  <a href="#" class="logo"><span class="logo-text">CX <strong>FUSION</strong></span></a>
-  <ul class="nav-links">
-    <li><a href="#features">Features</a></li>
-    <li><a href="#demos">Demos</a></li>
-    <li><a href="#calculator">ROI Calculator</a></li>
-    <li><a href="#testimonials">Customers</a></li>
-    <li><a href="#contact" class="nav-cta">Book a Demo</a></li>
-  </ul>
-</nav>
+<!-- ADMIN LINK -->
+<a href="/admin.html" class="admin-link">⚙ Admin</a>
 
-<section class="hero" id="home">
-  <div class="hero-badge">✦ Progressive Publishing Platform</div>
-  <h1>Your story is more than content.<strong>It's your core asset.</strong></h1>
-  <p class="hero-sub">CX Fusion is the multichannel editorial system that protects your story — bringing planning, editing, print layout, and digital publishing together in a single interface.</p>
-  <div class="hero-btns">
-    <a href="#contact" class="btn-hero">»» For Media Houses</a>
-    <a href="#contact" class="btn-hero btn-hero-outline">»» For Brands</a>
-  </div>
-  <div class="hero-laptop">
-    <div class="laptop-frame">
-      <div class="laptop-screen">
-        <div class="screen-bar">
-          <div class="screen-dot sd1"></div><div class="screen-dot sd2"></div><div class="screen-dot sd3"></div>
-          <div class="screen-url">app.cxfusion.io/dashboard</div>
-        </div>
-        <div class="screen-body">
-          <div class="screen-sidebar">
-            <div class="sb-icon active">📋</div><div class="sb-icon">✏️</div>
-            <div class="sb-icon">🖨</div><div class="sb-icon">🌐</div><div class="sb-icon">📊</div>
-          </div>
-          <div class="screen-main">
-            <div class="screen-title">Dashboard</div>
-            <div class="screen-cards">
-              <div class="sc-card"><div class="sc-icon">📝</div><div class="sc-label">Draft</div></div>
-              <div class="sc-card"><div class="sc-icon">👁</div><div class="sc-label">Review</div></div>
-              <div class="sc-card"><div class="sc-icon">🖨</div><div class="sc-label">Print</div></div>
-              <div class="sc-card"><div class="sc-icon">✅</div><div class="sc-label">Published</div></div>
-            </div>
-            <div class="screen-table">
-              <div class="st-header"><div class="st-col">Article</div><div class="st-col">Author</div><div class="st-col">Date</div><div class="st-col">Status</div></div>
-              <div class="st-row"><div class="st-cell">Feature Story Q1</div><div class="st-cell">M. Weber</div><div class="st-cell">15 Feb</div><div class="st-cell"><span class="st-badge badge-done">Done</span></div></div>
-              <div class="st-row"><div class="st-cell">Annual Review 2025</div><div class="st-cell">T. Müller</div><div class="st-cell">18 Feb</div><div class="st-cell"><span class="st-badge badge-review">Review</span></div></div>
-              <div class="st-row"><div class="st-cell">Digital Strategy</div><div class="st-cell">A. Schmidt</div><div class="st-cell">22 Feb</div><div class="st-cell"><span class="st-badge badge-draft">Draft</span></div></div>
-            </div>
-          </div>
-          <div class="screen-stats">
-            <div class="stat-box"><div class="stat-box-num">2,000</div><div class="stat-box-label">Views 24h</div><div class="mini-chart"><div class="mc-bar" style="height:40%"></div><div class="mc-bar" style="height:60%"></div><div class="mc-bar hi" style="height:80%"></div><div class="mc-bar" style="height:55%"></div><div class="mc-bar hi" style="height:100%"></div></div></div>
-            <div class="stat-box"><div class="stat-box-num">125</div><div class="stat-box-label">Articles/month</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="laptop-base"></div>
-    <div class="laptop-stand"></div>
-  </div>
-</section>
-
-<div class="logos-section">
-  <div class="logos-label">International publishers and brands trust CX Fusion.</div>
-  <div class="logos-track">
-    <div class="logo-item">swissgenetics</div>
-    <div class="logo-item">ROSEBUD editions</div>
-    <div class="logo-item">reiff medien</div>
-    <div class="logo-item">◆ Nomos</div>
-    <div class="logo-item">WESER-KURIER</div>
-    <div class="logo-item">PRINCETON UNIVERSITY</div>
+<!-- LANG BAR -->
+<div class="lang-bar">
+  <div class="inner">
+    <button class="lang-btn active" onclick="setLang('de')" id="btn-de">DE</button>
+    <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
   </div>
 </div>
 
-<section class="problems" id="problems">
-  <div class="section-center">
-    <div class="section-tag">The Challenge</div>
-    <h2>Where your publishing process gets stuck<br><span class="blue">– and how CX Fusion gets it moving again.</span></h2>
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo"><span>CX</span> FUSION</a>
+    <button class="nav-cta" onclick="document.getElementById('hero-email').focus()" data-i18n="nav_cta">Demo anfragen</button>
   </div>
-  <div class="problems-list">
-    <div class="problem-item fade-up">
-      <div class="problem-visual">⚙️</div>
-      <div class="problem-content">
-        <div class="problem-title">🚨 Fragmented Workflows</div>
-        <div class="problem-before">Fragmented workflows destroy value. When stories move between text documents, spreadsheets, layouts, CMS, and emails, clarity gets lost — and with it the impact.</div>
-        <div class="problem-after">CX Fusion empowers your story by uniting all content and processes into seamless workflows, from planning to publication.</div>
-      </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge" data-i18n="hero_badge">Progressive Publishing Platform</div>
+  <h1 data-i18n="hero_title">Ihre Story verdient<br>ein <em>besseres System.</em></h1>
+  <p class="hero-sub" data-i18n="hero_sub">CX Fusion vereint Planung, Redaktion, Print-Layout und digitale Ausspielung in einem einzigen Interface – für Verlage und Marken, die mehr wollen.</p>
+
+  <div class="hero-form">
+    <div class="hero-form-inner">
+      <input type="email" id="hero-email" placeholder="Ihre E-Mail-Adresse" data-i18n-placeholder="email_placeholder">
+      <button onclick="submitEmail('hero-email', 'hero-success')" data-i18n="cta_demo">Kostenlos testen →</button>
     </div>
-    <div class="problem-item fade-up">
-      <div class="problem-visual">📡</div>
-      <div class="problem-content">
-        <div class="problem-title">🚨 Separated Channels</div>
-        <div class="problem-before">When a story sits in separate silos for print, web, and social media, it loses its clarity, its impact and ultimately its credibility.</div>
-        <div class="problem-after">CX Fusion scales from one core version, ensuring consistency across every format and every audience.</div>
-      </div>
+  </div>
+  <div class="success-msg" id="hero-success" data-i18n="success_msg">✓ Perfekt! Wir melden uns innerhalb von 24 Stunden.</div>
+  <p class="hero-form-note" data-i18n="form_note">Kein Kreditkarte · Keine Verpflichtung · In 2 Minuten startklar</p>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="num">100<span>+</span></div>
+      <div class="label" data-i18n="stat1">Verlage & Marken</div>
     </div>
-    <div class="problem-item fade-up">
-      <div class="problem-visual">⏱️</div>
-      <div class="problem-content">
-        <div class="problem-title">🚨 Manual Processes</div>
-        <div class="problem-before">When skilled teams spend their time on copy & paste and layout adjustments, content turns into a cost factor instead of a growth driver.</div>
-        <div class="problem-after">CX Fusion automates time-consuming tasks, enabling your team to create new value instead of compensating for effort.</div>
+    <div class="hero-stat">
+      <div class="num">75<span>%</span></div>
+      <div class="label" data-i18n="stat2">weniger manuelle Arbeit</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num">3<span>×</span></div>
+      <div class="label" data-i18n="stat3">schnellere Produktion</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num">&lt;2<span>h</span></div>
+      <div class="label" data-i18n="stat4">bis zum ersten Artikel</div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD MOCKUP -->
+  <div class="hero-mockup">
+    <div class="mockup-bar">
+      <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
+      <div class="mockup-url">app.cxfusion.io/dashboard</div>
+    </div>
+    <div class="mockup-content">
+      <div class="mockup-sidebar">
+        <div class="mockup-nav-item active"><span class="mockup-nav-icon">📋</span> Dashboard</div>
+        <div class="mockup-nav-item"><span class="mockup-nav-icon">✏️</span> Redaktion</div>
+        <div class="mockup-nav-item"><span class="mockup-nav-icon">🖨</span> Print</div>
+        <div class="mockup-nav-item"><span class="mockup-nav-icon">🌐</span> Digital</div>
+        <div class="mockup-nav-item"><span class="mockup-nav-icon">📊</span> Analytics</div>
+      </div>
+      <div class="mockup-main">
+        <div class="mockup-card">
+          <div class="mockup-card-header">Aktuelle Artikel</div>
+          <div class="mockup-row">Feature Story Q1 <span class="mockup-tag tag-done">✓ Done</span></div>
+          <div class="mockup-row">Annual Review 2025 <span class="mockup-tag tag-review">Review</span></div>
+          <div class="mockup-row">Digital Strategy <span class="mockup-tag tag-draft">Draft</span></div>
+        </div>
+        <div class="mockup-card">
+          <div class="mockup-card-header">Print-Auslastung heute</div>
+          <div class="sim-bar"><div class="sim-bar-fill" style="width:72%"></div></div>
+          <div class="sim-bar"><div class="sim-bar-fill b" style="width:58%"></div></div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="features" id="features">
-  <div class="section-center">
-    <div class="section-tag">Platform Features</div>
-    <h2>Everything your editorial team needs</h2>
-    <p class="section-sub">From planning to print to digital — CX Fusion covers the entire publishing lifecycle in one unified platform.</p>
-  </div>
-  <div class="features-grid">
-    <div class="feature-card wide fade-up">
-      <div>
-        <div class="feature-icon">🔄</div>
-        <div class="feature-title">Multichannel Publishing</div>
-        <div class="feature-desc">Create content once and distribute it across digital, print, e-paper, and social — with full fidelity. CX Fusion ensures your story stays consistent across every channel and every audience segment, automatically.</div>
-      </div>
-      <div class="feature-visual-wide">
-        <div class="ch-pill">🖨 Print</div>
-        <div class="ch-pill">🌐 Web</div>
-        <div class="ch-pill">📱 Mobile</div>
-        <div class="ch-pill">📧 E-Paper</div>
-      </div>
-    </div>
-    <div class="feature-card fade-up">
-      <div class="feature-icon">✏️</div>
-      <div class="feature-title">Editorial Workflows</div>
-      <div class="feature-desc">Browser-based planning with live overviews and cross-departmental collaboration. Assignments, approvals, deadlines — all in one place.</div>
-    </div>
-    <div class="feature-card fade-up">
-      <div class="feature-icon">⚡</div>
-      <div class="feature-title">Automated Layout</div>
-      <div class="feature-desc">Powered by Adobe InDesign, CX Fusion's layout engine produces newspaper pages up to 75% faster — without compromising design quality.</div>
-    </div>
-    <div class="feature-card fade-up">
-      <div class="feature-icon">📄</div>
-      <div class="feature-title">E-Paper & Digital Editions</div>
-      <div class="feature-desc">Generate interactive digital editions at the push of a button. Kiosk management, bookmarks, full-text search, and ad server integration included.</div>
-    </div>
-    <div class="feature-card fade-up">
-      <div class="feature-icon">🔗</div>
-      <div class="feature-title">CMS & InDesign Sync</div>
-      <div class="feature-desc">Bidirectional synchronization between your web CMS and Adobe InDesign. Content flows seamlessly, eliminating manual re-entry.</div>
-    </div>
-    <div class="feature-card fade-up">
-      <div class="feature-icon">👥</div>
-      <div class="feature-title">User-Generated Content</div>
-      <div class="feature-desc">Integrate UGC directly into editorial planning. Social media posts, reader submissions, and external contributions flow straight into your workflow.</div>
+<!-- LOGOS -->
+<div class="logos-section">
+  <div class="logos-inner">
+    <p class="logos-label" data-i18n="logos_label">Internationale Verlage und Marken vertrauen auf CX Fusion</p>
+    <div class="logos-track">
+      <span class="logo-item">swissgenetics</span>
+      <span class="logo-item">ROSEBUD editions</span>
+      <span class="logo-item">reiff medien</span>
+      <span class="logo-item">◆ Nomos</span>
+      <span class="logo-item">WESER-KURIER</span>
+      <span class="logo-item">PRINCETON UNIVERSITY</span>
     </div>
   </div>
-</section>
+</div>
 
-<section class="videos" id="demos">
-  <div class="section-center">
-    <div class="section-tag">Product Demos</div>
-    <h2>See CX Fusion in action</h2>
-    <p class="section-sub">Short demos for each key feature — find exactly what matters to you.</p>
-  </div>
-  <div class="videos-grid">
-    <div class="video-card fade-up" onclick="openVideo('CX Fusion Platform Overview')">
-      <div class="video-thumb"><div class="play-circle"></div><div class="video-duration">2:14</div></div>
-      <div class="video-info"><div class="video-tag">Overview</div><div class="video-title">CX Fusion Platform Overview — How it all fits together</div></div>
-    </div>
-    <div class="video-card fade-up" onclick="openVideo('From story planning to publication')">
-      <div class="video-thumb" style="background:linear-gradient(135deg,#1558a8,#1a8cc8);"><div class="play-circle"></div><div class="video-duration">1:47</div></div>
-      <div class="video-info"><div class="video-tag">Editorial Workflow</div><div class="video-title">From story planning to publication in under 2 minutes</div></div>
-    </div>
-    <div class="video-card fade-up" onclick="openVideo('75% layout automation')">
-      <div class="video-thumb" style="background:linear-gradient(135deg,#1a8cc8,#2ab5c8);"><div class="play-circle"></div><div class="video-duration">3:02</div></div>
-      <div class="video-info"><div class="video-tag">Automated Layout</div><div class="video-title">75% layout automation — WESER-KURIER case study</div></div>
-    </div>
-    <div class="video-card fade-up" onclick="openVideo('Digital editions')">
-      <div class="video-thumb" style="background:linear-gradient(135deg,#2ab5c8,#1a6cc8);"><div class="play-circle"></div><div class="video-duration">1:33</div></div>
-      <div class="video-info"><div class="video-tag">E-Paper</div><div class="video-title">Digital editions at the push of a button</div></div>
-    </div>
-    <div class="video-card fade-up" onclick="openVideo('InDesign CMS Sync')">
-      <div class="video-thumb" style="background:linear-gradient(135deg,#1558a8,#2ab5c8);"><div class="play-circle"></div><div class="video-duration">2:28</div></div>
-      <div class="video-info"><div class="video-tag">CMS Integration</div><div class="video-title">Bidirectional sync between InDesign and your Web CMS</div></div>
-    </div>
-    <div class="video-card fade-up" onclick="openVideo('Brand Communication')">
-      <div class="video-thumb" style="background:linear-gradient(135deg,#1a6cc8,#1a8cc8);"><div class="play-circle"></div><div class="video-duration">1:55</div></div>
-      <div class="video-info"><div class="video-tag">Brand Communication</div><div class="video-title">CX Fusion for Corporate Publishers & Brands</div></div>
-    </div>
-  </div>
-</section>
-
-<section class="calculator" id="calculator">
-  <div class="calc-wrapper">
-    <div>
-      <div class="section-tag">ROI Calculator</div>
-      <h2>What could CX Fusion save your team?</h2>
-      <p style="color:var(--text-light);font-size:0.95rem;line-height:1.7;margin-top:0.5rem;">Adjust the sliders to match your team and see your estimated annual savings with CX Fusion.</p>
-      <div class="calc-inputs">
-        <div class="calc-field"><label>Number of Editors</label><div class="calc-row"><input type="range" id="editors" min="2" max="100" value="15" oninput="calcUpdate()"><div class="calc-val" id="editorsVal">15</div></div></div>
-        <div class="calc-field"><label>Average Hourly Rate (€)</label><div class="calc-row"><input type="range" id="rate" min="20" max="120" value="55" oninput="calcUpdate()"><div class="calc-val" id="rateVal">€55</div></div></div>
-        <div class="calc-field"><label>Hours/Week lost to manual tasks</label><div class="calc-row"><input type="range" id="hours" min="1" max="20" value="8" oninput="calcUpdate()"><div class="calc-val" id="hoursVal">8h</div></div></div>
-        <div class="calc-field"><label>Current Layout Automation (%)</label><div class="calc-row"><input type="range" id="automation" min="0" max="60" value="10" oninput="calcUpdate()"><div class="calc-val" id="automationVal">10%</div></div></div>
+<!-- PROBLEMS SECTION -->
+<section class="section problems-section">
+  <div class="section-inner">
+    <p class="section-label reveal" data-i18n="problem_label">Das Problem</p>
+    <h2 class="section-title reveal" data-i18n="problem_title">Was <em>heute</em> Ihre Story bremst</h2>
+    <p class="section-sub reveal" data-i18n="problem_sub">Drei Barrieren, die CX Fusion überwindet.</p>
+    <div class="problems-grid">
+      <div class="problem-card reveal reveal-delay-1">
+        <div class="problem-icon">🔀</div>
+        <div class="problem-title" data-i18n="prob1_title">Fragmentierte Workflows</div>
+        <div class="problem-desc" data-i18n="prob1_desc">Stories pendeln zwischen Word, Excel, InDesign und CMS. Jeder Wechsel kostet Zeit, Qualität und Nerven.</div>
+        <div class="problem-solution" data-i18n="prob1_sol">Ein System für alle Prozesse — von der Idee bis zur Veröffentlichung</div>
+      </div>
+      <div class="problem-card reveal reveal-delay-2">
+        <div class="problem-icon">📢</div>
+        <div class="problem-title" data-i18n="prob2_title">Getrennte Kanäle</div>
+        <div class="problem-desc" data-i18n="prob2_desc">Print, Web, Social Media: überall anders. Die Story verliert Konsistenz und Wirkung.</div>
+        <div class="problem-solution" data-i18n="prob2_sol">Zentral erstellen, kanalgerecht ausspielen — automatisch</div>
+      </div>
+      <div class="problem-card reveal reveal-delay-3">
+        <div class="problem-icon">⏳</div>
+        <div class="problem-title" data-i18n="prob3_title">Manuelle Prozesse</div>
+        <div class="problem-desc" data-i18n="prob3_desc">Qualifizierte Teams verbringen Stunden mit Layoutanpassungen. Content wird zum Kostenfaktor statt zum Wachstumstreiber.</div>
+        <div class="problem-solution" data-i18n="prob3_sol">75% weniger manuelle Arbeit durch KI-gestützte Automatisierung</div>
       </div>
     </div>
-    <div class="calc-results">
-      <div class="calc-results-title">Your Estimated Annual Savings</div>
-      <div class="result-item"><div class="result-label">Time saved per year</div><div class="result-value" id="timeSaved">—</div><div class="result-sub">Editor hours freed up</div></div>
-      <div class="result-item"><div class="result-label">Cost savings per year</div><div class="result-value green" id="costSaved">—</div><div class="result-sub">Based on your hourly rate</div></div>
-      <div class="result-item"><div class="result-label">Layout automation gain</div><div class="result-value" id="layoutGain">—</div><div class="result-sub">Additional automation with CX Fusion</div></div>
-      <div class="result-item"><div class="result-label">Estimated ROI</div><div class="result-value green" id="roi">—</div><div class="result-sub">Return on investment within 12 months</div></div>
-      <div class="calc-cta"><a href="#contact" class="btn-white">Get a personalised quote →</a></div>
+  </div>
+</section>
+
+<!-- WORKFLOW INFOGRAPHIC -->
+<section class="section workflow-section">
+  <div class="section-inner">
+    <p class="section-label reveal" data-i18n="workflow_label">Wie es funktioniert</p>
+    <h2 class="section-title reveal" data-i18n="workflow_title">Von der Idee zur<br><em>Veröffentlichung</em> — in einem System</h2>
+    <div class="workflow-visual reveal">
+      <div class="workflow-steps">
+        <div class="workflow-step">
+          <div class="workflow-icon-wrap">✍️</div>
+          <div class="workflow-label" data-i18n="wf1_label">Planen</div>
+          <div class="workflow-desc" data-i18n="wf1_desc">Themen & Ressourcen zentral koordinieren</div>
+        </div>
+        <div class="workflow-step">
+          <div class="workflow-icon-wrap">📝</div>
+          <div class="workflow-label" data-i18n="wf2_label">Redigieren</div>
+          <div class="workflow-desc" data-i18n="wf2_desc">Kollaborativ & mit KI-Unterstützung</div>
+        </div>
+        <div class="workflow-step">
+          <div class="workflow-icon-wrap">🖨</div>
+          <div class="workflow-label" data-i18n="wf3_label">Layout</div>
+          <div class="workflow-desc" data-i18n="wf3_desc">Print-Layout automatisch generieren</div>
+        </div>
+        <div class="workflow-step">
+          <div class="workflow-icon-wrap">🌐</div>
+          <div class="workflow-label" data-i18n="wf4_label">Digital</div>
+          <div class="workflow-desc" data-i18n="wf4_desc">Web, Social, Newsletter — kanalgerecht</div>
+        </div>
+        <div class="workflow-step">
+          <div class="workflow-icon-wrap">📊</div>
+          <div class="workflow-label" data-i18n="wf5_label">Analysieren</div>
+          <div class="workflow-desc" data-i18n="wf5_desc">Performance messen & optimieren</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="testimonials" id="testimonials">
-  <div class="section-center">
-    <div class="section-tag">Customer Stories</div>
-    <h2>Trusted by publishers worldwide</h2>
-    <p class="section-sub">See what editorial teams say after switching to CX Fusion.</p>
-  </div>
-  <div class="testimonials-grid">
-    <div class="testi-card fade-up">
-      <div class="stars">★★★★★</div>
-      <div class="testi-quote">CX Fusion has fundamentally changed how we produce our newspaper. The automated layout alone has saved us hundreds of hours every month.</div>
-      <div class="testi-author"><div class="author-av">WK</div><div><div class="author-name">Head of Production</div><div class="author-co">WESER-KURIER</div></div></div>
-    </div>
-    <div class="testi-card fade-up">
-      <div class="stars">★★★★★</div>
-      <div class="testi-quote">Planning, writing, and publishing print and digital from the same interface is a genuine game changer for our editorial workflow.</div>
-      <div class="testi-author"><div class="author-av">NM</div><div><div class="author-name">Editorial Director</div><div class="author-co">Nomos Publishing</div></div></div>
-    </div>
-    <div class="testi-card fade-up">
-      <div class="stars">★★★★★</div>
-      <div class="testi-quote">Onboarding was smooth and the ppi Media team is genuinely helpful. Our content consistency across all channels improved within weeks.</div>
-      <div class="testi-author"><div class="author-av">RM</div><div><div class="author-name">Digital Editor</div><div class="author-co">Reiff Medien</div></div></div>
+<!-- FEATURE: DIGITAL -->
+<section class="section" style="background:var(--off-white)">
+  <div class="section-inner">
+    <div class="features-split">
+      <div class="feature-text">
+        <p class="section-label reveal" data-i18n="feat1_label">CX Fusion Digital</p>
+        <h2 class="section-title reveal" data-i18n="feat1_title">Eine Story.<br><em>Alle Kanäle.</em></h2>
+        <p class="section-sub reveal" data-i18n="feat1_sub">Schreiben Sie einmal, veröffentlichen Sie überall. CX Fusion passt Ihre Inhalte automatisch für Web, App, Social Media und Newsletter an.</p>
+        <ul class="feature-list reveal">
+          <li><span class="feature-check">✓</span><span data-i18n="feat1_li1">Automatische Formatierung für alle Kanäle</span></li>
+          <li><span class="feature-check">✓</span><span data-i18n="feat1_li2">KI-gestützte Titelvorschläge & Zusammenfassungen</span></li>
+          <li><span class="feature-check">✓</span><span data-i18n="feat1_li3">SEO-Optimierung in Echtzeit</span></li>
+          <li><span class="feature-check">✓</span><span data-i18n="feat1_li4">Social-Media-Snippets automatisch erstellen</span></li>
+        </ul>
+      </div>
+      <div class="feature-visual reveal">
+        <div class="feature-mockup">
+          <div style="color:rgba(255,255,255,0.5);font-size:11px;margin-bottom:16px;letter-spacing:1px;">KANAL-AUSSPIELUNG</div>
+          <div class="feature-card-sim">
+            <div class="sim-header">Web-Artikel</div>
+            <div class="sim-bar"><div class="sim-bar-fill" style="width:90%"></div></div>
+            <div class="sim-bar"><div class="sim-bar-fill b" style="width:75%"></div></div>
+          </div>
+          <div class="feature-card-sim" style="animation-delay:.2s">
+            <div class="sim-header">Social Media</div>
+            <div class="sim-bar"><div class="sim-bar-fill" style="width:60%"></div></div>
+          </div>
+          <div class="feature-card-sim" style="animation-delay:.4s">
+            <div class="sim-header">Newsletter</div>
+            <div class="sim-bar"><div class="sim-bar-fill c" style="width:80%"></div></div>
+            <div class="sim-bar"><div class="sim-bar-fill" style="width:50%"></div></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="cta-final" id="contact">
-  <div class="section-tag" style="color:rgba(255,255,255,0.7);">Get Started</div>
-  <h2>Ready to protect your story?</h2>
-  <p>Book a free, no-obligation demo with one of our publishing experts and discover how CX Fusion can transform your workflows.</p>
-  <div class="cta-final-btns">
-    <a href="https://calendly.com/cxfusion/scheduler-en" target="_blank" class="btn-hero">Book a Free Demo</a>
-    <a href="mailto:cxfusion@ppimedia.de" class="btn-hero btn-hero-outline">Contact Us</a>
+<!-- FEATURE: PRINT -->
+<section class="section print-section">
+  <div class="section-inner">
+    <p class="section-label reveal" data-i18n="feat2_label">CX Fusion Print</p>
+    <h2 class="section-title reveal" data-i18n="feat2_title">Print-Produktion<br><em>neu gedacht.</em></h2>
+    <p class="section-sub reveal" data-i18n="feat2_sub">Von der Redaktion direkt ins druckfertige Layout. Automatisch, konsistent, schnell.</p>
+    <div class="print-visual">
+      <div class="print-mockup reveal">
+        <div class="print-header-bar">
+          <span style="font-size:10px">⬤</span><span style="font-size:10px">⬤</span><span style="font-size:10px">⬤</span>
+          <span class="print-header-title">CX Fusion Print – Ausgabe 03/2026</span>
+        </div>
+        <div class="print-pages">
+          <div class="print-page">
+            <div class="print-page-header"></div>
+            <div class="print-page-content">
+              <div class="print-line" style="width:90%"></div>
+              <div class="print-line"></div>
+              <div class="print-line"></div>
+            </div>
+          </div>
+          <div class="print-page">
+            <div class="print-page-header"></div>
+            <div class="print-page-content">
+              <div class="print-line" style="width:80%"></div>
+              <div class="print-line"></div>
+              <div class="print-line"></div>
+            </div>
+          </div>
+          <div class="print-page">
+            <div class="print-page-header"></div>
+            <div class="print-page-content">
+              <div class="print-line" style="width:95%"></div>
+              <div class="print-line"></div>
+              <div class="print-line"></div>
+            </div>
+          </div>
+          <div class="print-page">
+            <div class="print-page-header"></div>
+            <div class="print-page-content">
+              <div class="print-line" style="width:70%"></div>
+              <div class="print-line"></div>
+              <div class="print-line"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="print-stats">
+        <div class="print-stat-card reveal reveal-delay-1">
+          <div class="print-stat-icon">⚡</div>
+          <div>
+            <div class="print-stat-num">75%</div>
+            <div class="print-stat-label" data-i18n="print_stat1">weniger Zeit für Layout-Korrekturen</div>
+          </div>
+        </div>
+        <div class="print-stat-card reveal reveal-delay-2">
+          <div class="print-stat-icon">🎯</div>
+          <div>
+            <div class="print-stat-num">100%</div>
+            <div class="print-stat-label" data-i18n="print_stat2">konsistente Markenidentität in allen Ausgaben</div>
+          </div>
+        </div>
+        <div class="print-stat-card reveal reveal-delay-3">
+          <div class="print-stat-icon">🚀</div>
+          <div>
+            <div class="print-stat-num">3×</div>
+            <div class="print-stat-label" data-i18n="print_stat3">schnellere Produktion vom Artikel zum Print-PDF</div>
+          </div>
+        </div>
+        <div class="print-stat-card reveal">
+          <div class="print-stat-icon">🔗</div>
+          <div>
+            <div class="print-stat-num">1</div>
+            <div class="print-stat-label" data-i18n="print_stat4">System für Redaktion und Print — keine Doppelarbeit</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
+<!-- COMPARISON TABLE -->
+<section class="section compare-section">
+  <div class="section-inner">
+    <p class="section-label reveal" data-i18n="compare_label">Vergleich</p>
+    <h2 class="section-title reveal" data-i18n="compare_title">CX Fusion vs. <em>Alternativen</em></h2>
+    <div class="compare-table reveal">
+      <div class="compare-header">
+        <div class="compare-col-head" data-i18n="compare_feature">Funktion</div>
+        <div class="compare-col-head highlight">CX Fusion</div>
+        <div class="compare-col-head" data-i18n="compare_cms">Klassisches CMS</div>
+        <div class="compare-col-head" data-i18n="compare_indesign">InDesign + Word</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-feature" data-i18n="cf1">Print & Digital aus einer Quelle</div>
+        <div class="compare-cell cx">✓</div>
+        <div class="compare-cell no">✗</div>
+        <div class="compare-cell no">✗</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-feature" data-i18n="cf2">Automatisches Layout</div>
+        <div class="compare-cell cx">✓</div>
+        <div class="compare-cell no">✗</div>
+        <div class="compare-cell no">✗</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-feature" data-i18n="cf3">Kollaboratives Arbeiten</div>
+        <div class="compare-cell cx">✓</div>
+        <div class="compare-cell cx">✓</div>
+        <div class="compare-cell no">✗</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-feature" data-i18n="cf4">KI-gestützte Textvorschläge</div>
+        <div class="compare-cell cx">✓</div>
+        <div class="compare-cell no">✗</div>
+        <div class="compare-cell no">✗</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-feature" data-i18n="cf5">Multichannel-Ausspielung</div>
+        <div class="compare-cell cx">✓</div>
+        <div class="compare-cell">~</div>
+        <div class="compare-cell no">✗</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-feature" data-i18n="cf6">Druckfertige PDF-Ausgabe</div>
+        <div class="compare-cell cx">✓</div>
+        <div class="compare-cell no">✗</div>
+        <div class="compare-cell cx">✓</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section testimonials-section">
+  <div class="section-inner">
+    <p class="section-label reveal" data-i18n="testi_label">Stimmen unserer Kunden</p>
+    <h2 class="section-title reveal" data-i18n="testi_title">Was unsere Kunden <em>sagen</em></h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal reveal-delay-1">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text" data-i18n="testi1_text">CX Fusion hat unsere Printproduktion revolutioniert. Wir sparen 50% der Zeit beim Layout — und die Qualität ist besser als je zuvor.</p>
+        <div class="testimonial-author" data-i18n="testi1_author">Markus Weber</div>
+        <div class="testimonial-role">Chefredakteur, WESER-KURIER</div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-2">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text" data-i18n="testi2_text">Endlich ein System, das Print und Digital wirklich zusammenbringt. Unsere Redakteure lieben es.</p>
+        <div class="testimonial-author" data-i18n="testi2_author">Sarah Müller</div>
+        <div class="testimonial-role">Head of Content, Nomos Verlag</div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-3">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text" data-i18n="testi3_text">Die Implementierung war überraschend einfach. In zwei Wochen waren wir vollständig migriert und produktiver als vorher.</p>
+        <div class="testimonial-author" data-i18n="testi3_author">Thomas Klein</div>
+        <div class="testimonial-role">CTO, reiff medien</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEAD SECTION -->
+<section class="lead-section">
+  <div class="lead-inner">
+    <h2 class="lead-title reveal" data-i18n="lead_title">Bereit für das Publishing<br>der Zukunft?</h2>
+    <p class="lead-sub reveal" data-i18n="lead_sub">Tausende von Redaktionen und Verlagen vertrauen bereits auf CX Fusion. Werden Sie Teil der Bewegung.</p>
+    <div class="lead-form reveal">
+      <input type="email" id="lead-email" placeholder="Ihre E-Mail-Adresse" data-i18n-placeholder="email_placeholder">
+      <button onclick="submitEmail('lead-email', 'lead-success')" data-i18n="cta_demo">Jetzt Demo anfragen →</button>
+    </div>
+    <div class="success-msg" id="lead-success" data-i18n="success_msg">✓ Perfekt! Wir melden uns innerhalb von 24 Stunden.</div>
+    <p class="lead-note reveal" data-i18n="form_note">Kein Kreditkarte · Keine Verpflichtung · In 2 Minuten startklar</p>
+    <div class="lead-logos reveal">
+      <span class="lead-logo-label" data-i18n="logos_label2">Vertrauen von</span>
+      <span class="lead-logo-item">WESER-KURIER</span>
+      <span class="lead-logo-item">NOMOS</span>
+      <span class="lead-logo-item">REIFF</span>
+      <span class="lead-logo-item">PRINCETON</span>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section faq-section">
+  <div class="section-inner">
+    <p class="section-label reveal" data-i18n="faq_label">FAQ</p>
+    <h2 class="section-title reveal" data-i18n="faq_title">Häufige <em>Fragen</em></h2>
+    <div class="faq-grid">
+      <div class="faq-item reveal">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq1_q">Wie lange dauert die Implementierung?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer"><div class="faq-answer-inner" data-i18n="faq1_a">Die meisten Kunden sind in 1–2 Wochen vollständig eingerichtet. Unser Team begleitet Sie durch den gesamten Onboarding-Prozess.</div></div>
+      </div>
+      <div class="faq-item reveal reveal-delay-1">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq2_q">Kann ich meine bestehenden Daten migrieren?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer"><div class="faq-answer-inner" data-i18n="faq2_a">Ja. CX Fusion unterstützt Import aus allen gängigen CMS-Systemen, InDesign, Word und anderen Formaten. Unser Migrationsteam hilft Ihnen dabei.</div></div>
+      </div>
+      <div class="faq-item reveal reveal-delay-2">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq3_q">Gibt es eine Testphase?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer"><div class="faq-answer-inner" data-i18n="faq3_a">Ja, wir bieten eine kostenlose Demo sowie eine 30-tägige Testphase ohne Kreditkarte an. Einfach E-Mail eintragen und wir melden uns.</div></div>
+      </div>
+      <div class="faq-item reveal reveal-delay-3">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq4_q">Funktioniert CX Fusion auch für kleine Verlage?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer"><div class="faq-answer-inner" data-i18n="faq4_a">Absolut. CX Fusion ist skalierbar — von kleinen Redaktionen mit 3 Personen bis hin zu internationalen Medienhäusern mit Hunderten von Nutzern.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
 <footer>
-  <div class="footer-logo-text">CX FUSION</div>
-  <div>A solution by ppi Media GmbH · +49 40 227433-670 · cxfusion@ppimedia.de</div>
-  <div>© 2026 CX Fusion. All rights reserved.</div>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo"><span>CX</span> FUSION</div>
+        <p class="footer-desc" data-i18n="footer_desc">Das modulare Redaktionssystem für modernes Publishing. Print und Digital aus einem System.</p>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer_col1">Produkt</h4>
+        <a href="#" data-i18n="footer_digital">CX Fusion Digital</a>
+        <a href="#" data-i18n="footer_print">CX Fusion Print</a>
+        <a href="#" data-i18n="footer_pricing">Preise</a>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer_col2">Unternehmen</h4>
+        <a href="#" data-i18n="footer_about">Über uns</a>
+        <a href="#" data-i18n="footer_blog">Blog</a>
+        <a href="#" data-i18n="footer_contact">Kontakt</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 CX Fusion. Alle Rechte vorbehalten.</span>
+      <span><a href="#" style="color:rgba(255,255,255,0.4);text-decoration:none" data-i18n="footer_privacy">Datenschutz</a> · <a href="#" style="color:rgba(255,255,255,0.4);text-decoration:none" data-i18n="footer_imprint">Impressum</a></span>
+    </div>
+  </div>
 </footer>
 
 <script>
-  window.addEventListener('scroll', () => {
-    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
+// ===== TRANSLATIONS =====
+const i18n = {
+  de: {
+    nav_cta: "Demo anfragen",
+    hero_badge: "Progressive Publishing Platform",
+    hero_title: "Ihre Story verdient<br>ein <em>besseres System.</em>",
+    hero_sub: "CX Fusion vereint Planung, Redaktion, Print-Layout und digitale Ausspielung in einem einzigen Interface – für Verlage und Marken, die mehr wollen.",
+    email_placeholder: "Ihre E-Mail-Adresse",
+    cta_demo: "Kostenlos testen →",
+    form_note: "Kein Kreditkarte · Keine Verpflichtung · In 2 Minuten startklar",
+    success_msg: "✓ Perfekt! Wir melden uns innerhalb von 24 Stunden.",
+    stat1: "Verlage & Marken",
+    stat2: "weniger manuelle Arbeit",
+    stat3: "schnellere Produktion",
+    stat4: "bis zum ersten Artikel",
+    logos_label: "Internationale Verlage und Marken vertrauen auf CX Fusion",
+    logos_label2: "Vertrauen von",
+    problem_label: "Das Problem",
+    problem_title: "Was <em>heute</em> Ihre Story bremst",
+    problem_sub: "Drei Barrieren, die CX Fusion überwindet.",
+    prob1_title: "Fragmentierte Workflows",
+    prob1_desc: "Stories pendeln zwischen Word, Excel, InDesign und CMS. Jeder Wechsel kostet Zeit, Qualität und Nerven.",
+    prob1_sol: "Ein System für alle Prozesse — von der Idee bis zur Veröffentlichung",
+    prob2_title: "Getrennte Kanäle",
+    prob2_desc: "Print, Web, Social Media: überall anders. Die Story verliert Konsistenz und Wirkung.",
+    prob2_sol: "Zentral erstellen, kanalgerecht ausspielen — automatisch",
+    prob3_title: "Manuelle Prozesse",
+    prob3_desc: "Qualifizierte Teams verbringen Stunden mit Layoutanpassungen. Content wird zum Kostenfaktor.",
+    prob3_sol: "75% weniger manuelle Arbeit durch KI-gestützte Automatisierung",
+    workflow_label: "Wie es funktioniert",
+    workflow_title: "Von der Idee zur<br><em>Veröffentlichung</em> — in einem System",
+    wf1_label: "Planen", wf1_desc: "Themen & Ressourcen zentral koordinieren",
+    wf2_label: "Redigieren", wf2_desc: "Kollaborativ & mit KI-Unterstützung",
+    wf3_label: "Layout", wf3_desc: "Print-Layout automatisch generieren",
+    wf4_label: "Digital", wf4_desc: "Web, Social, Newsletter — kanalgerecht",
+    wf5_label: "Analysieren", wf5_desc: "Performance messen & optimieren",
+    feat1_label: "CX Fusion Digital",
+    feat1_title: "Eine Story.<br><em>Alle Kanäle.</em>",
+    feat1_sub: "Schreiben Sie einmal, veröffentlichen Sie überall. CX Fusion passt Ihre Inhalte automatisch für Web, App, Social Media und Newsletter an.",
+    feat1_li1: "Automatische Formatierung für alle Kanäle",
+    feat1_li2: "KI-gestützte Titelvorschläge & Zusammenfassungen",
+    feat1_li3: "SEO-Optimierung in Echtzeit",
+    feat1_li4: "Social-Media-Snippets automatisch erstellen",
+    feat2_label: "CX Fusion Print",
+    feat2_title: "Print-Produktion<br><em>neu gedacht.</em>",
+    feat2_sub: "Von der Redaktion direkt ins druckfertige Layout. Automatisch, konsistent, schnell.",
+    print_stat1: "weniger Zeit für Layout-Korrekturen",
+    print_stat2: "konsistente Markenidentität in allen Ausgaben",
+    print_stat3: "schnellere Produktion vom Artikel zum Print-PDF",
+    print_stat4: "System für Redaktion und Print — keine Doppelarbeit",
+    compare_label: "Vergleich",
+    compare_title: "CX Fusion vs. <em>Alternativen</em>",
+    compare_feature: "Funktion",
+    compare_cms: "Klassisches CMS",
+    compare_indesign: "InDesign + Word",
+    cf1: "Print & Digital aus einer Quelle",
+    cf2: "Automatisches Layout",
+    cf3: "Kollaboratives Arbeiten",
+    cf4: "KI-gestützte Textvorschläge",
+    cf5: "Multichannel-Ausspielung",
+    cf6: "Druckfertige PDF-Ausgabe",
+    testi_label: "Stimmen unserer Kunden",
+    testi_title: "Was unsere Kunden <em>sagen</em>",
+    testi1_text: "CX Fusion hat unsere Printproduktion revolutioniert. Wir sparen 50% der Zeit beim Layout — und die Qualität ist besser als je zuvor.",
+    testi1_author: "Markus Weber",
+    testi2_text: "Endlich ein System, das Print und Digital wirklich zusammenbringt. Unsere Redakteure lieben es.",
+    testi2_author: "Sarah Müller",
+    testi3_text: "Die Implementierung war überraschend einfach. In zwei Wochen waren wir vollständig migriert.",
+    testi3_author: "Thomas Klein",
+    lead_title: "Bereit für das Publishing<br>der Zukunft?",
+    lead_sub: "Tausende von Redaktionen und Verlagen vertrauen bereits auf CX Fusion.",
+    faq_label: "FAQ",
+    faq_title: "Häufige <em>Fragen</em>",
+    faq1_q: "Wie lange dauert die Implementierung?",
+    faq1_a: "Die meisten Kunden sind in 1–2 Wochen vollständig eingerichtet. Unser Team begleitet Sie durch den gesamten Onboarding-Prozess.",
+    faq2_q: "Kann ich meine bestehenden Daten migrieren?",
+    faq2_a: "Ja. CX Fusion unterstützt Import aus allen gängigen CMS-Systemen, InDesign, Word und anderen Formaten.",
+    faq3_q: "Gibt es eine Testphase?",
+    faq3_a: "Ja, wir bieten eine kostenlose Demo sowie eine 30-tägige Testphase ohne Kreditkarte an.",
+    faq4_q: "Funktioniert CX Fusion auch für kleine Verlage?",
+    faq4_a: "Absolut. CX Fusion ist skalierbar — von kleinen Redaktionen mit 3 Personen bis hin zu internationalen Medienhäusern.",
+    footer_desc: "Das modulare Redaktionssystem für modernes Publishing. Print und Digital aus einem System.",
+    footer_col1: "Produkt", footer_col2: "Unternehmen",
+    footer_digital: "CX Fusion Digital", footer_print: "CX Fusion Print", footer_pricing: "Preise",
+    footer_about: "Über uns", footer_blog: "Blog", footer_contact: "Kontakt",
+    footer_privacy: "Datenschutz", footer_imprint: "Impressum"
+  },
+  en: {
+    nav_cta: "Request Demo",
+    hero_badge: "Progressive Publishing Platform",
+    hero_title: "Your story deserves<br>a <em>better system.</em>",
+    hero_sub: "CX Fusion unifies planning, editing, print layout, and digital publishing in a single interface — for publishers and brands who want more.",
+    email_placeholder: "Your email address",
+    cta_demo: "Start for free →",
+    form_note: "No credit card · No commitment · Ready in 2 minutes",
+    success_msg: "✓ Perfect! We'll get back to you within 24 hours.",
+    stat1: "Publishers & Brands",
+    stat2: "less manual work",
+    stat3: "faster production",
+    stat4: "to the first article",
+    logos_label: "International publishers and brands trust CX Fusion",
+    logos_label2: "Trusted by",
+    problem_label: "The Problem",
+    problem_title: "What's <em>slowing down</em> your story today",
+    problem_sub: "Three barriers that CX Fusion overcomes.",
+    prob1_title: "Fragmented Workflows",
+    prob1_desc: "Stories bounce between Word, Excel, InDesign and CMS. Every switch costs time, quality and sanity.",
+    prob1_sol: "One system for all processes — from idea to publication",
+    prob2_title: "Separated Channels",
+    prob2_desc: "Print, web, social media: all different. The story loses consistency and impact.",
+    prob2_sol: "Create centrally, publish channel-specifically — automatically",
+    prob3_title: "Manual Processes",
+    prob3_desc: "Skilled teams spend hours on layout adjustments. Content becomes a cost rather than a growth driver.",
+    prob3_sol: "75% less manual work through AI-powered automation",
+    workflow_label: "How it works",
+    workflow_title: "From idea to<br><em>publication</em> — in one system",
+    wf1_label: "Plan", wf1_desc: "Coordinate topics & resources centrally",
+    wf2_label: "Edit", wf2_desc: "Collaboratively & with AI support",
+    wf3_label: "Layout", wf3_desc: "Generate print layouts automatically",
+    wf4_label: "Digital", wf4_desc: "Web, social, newsletter — channel-specific",
+    wf5_label: "Analyze", wf5_desc: "Measure & optimize performance",
+    feat1_label: "CX Fusion Digital",
+    feat1_title: "One story.<br><em>All channels.</em>",
+    feat1_sub: "Write once, publish everywhere. CX Fusion automatically adapts your content for web, app, social media and newsletters.",
+    feat1_li1: "Automatic formatting for all channels",
+    feat1_li2: "AI-powered headline suggestions & summaries",
+    feat1_li3: "Real-time SEO optimization",
+    feat1_li4: "Automatic social media snippets",
+    feat2_label: "CX Fusion Print",
+    feat2_title: "Print production<br><em>reimagined.</em>",
+    feat2_sub: "From the editorial team directly to print-ready layout. Automatic, consistent, fast.",
+    print_stat1: "less time for layout corrections",
+    print_stat2: "consistent brand identity across all editions",
+    print_stat3: "faster production from article to print PDF",
+    print_stat4: "system for editorial and print — no duplicate work",
+    compare_label: "Comparison",
+    compare_title: "CX Fusion vs. <em>Alternatives</em>",
+    compare_feature: "Feature",
+    compare_cms: "Classic CMS",
+    compare_indesign: "InDesign + Word",
+    cf1: "Print & digital from one source",
+    cf2: "Automatic layout",
+    cf3: "Collaborative editing",
+    cf4: "AI-powered text suggestions",
+    cf5: "Multichannel publishing",
+    cf6: "Print-ready PDF output",
+    testi_label: "Customer Voices",
+    testi_title: "What our customers <em>say</em>",
+    testi1_text: "CX Fusion revolutionized our print production. We save 50% of layout time — and the quality is better than ever.",
+    testi1_author: "Markus Weber",
+    testi2_text: "Finally a system that truly brings print and digital together. Our editors love it.",
+    testi2_author: "Sarah Müller",
+    testi3_text: "Implementation was surprisingly easy. In two weeks we were fully migrated and more productive than before.",
+    testi3_author: "Thomas Klein",
+    lead_title: "Ready for the future<br>of publishing?",
+    lead_sub: "Thousands of editorial teams and publishers already trust CX Fusion.",
+    faq_label: "FAQ",
+    faq_title: "Frequently <em>Asked Questions</em>",
+    faq1_q: "How long does implementation take?",
+    faq1_a: "Most customers are fully set up within 1–2 weeks. Our team guides you through the entire onboarding process.",
+    faq2_q: "Can I migrate my existing data?",
+    faq2_a: "Yes. CX Fusion supports import from all major CMS systems, InDesign, Word and other formats.",
+    faq3_q: "Is there a trial period?",
+    faq3_a: "Yes, we offer a free demo and a 30-day trial without a credit card.",
+    faq4_q: "Does CX Fusion work for small publishers too?",
+    faq4_a: "Absolutely. CX Fusion scales — from small editorial teams of 3 to international media houses with hundreds of users.",
+    footer_desc: "The modular editorial system for modern publishing. Print and digital from one system.",
+    footer_col1: "Product", footer_col2: "Company",
+    footer_digital: "CX Fusion Digital", footer_print: "CX Fusion Print", footer_pricing: "Pricing",
+    footer_about: "About", footer_blog: "Blog", footer_contact: "Contact",
+    footer_privacy: "Privacy Policy", footer_imprint: "Imprint"
+  }
+};
+
+let currentLang = 'de';
+
+function setLang(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  document.getElementById('btn-de').classList.toggle('active', lang === 'de');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+
+  const t = i18n[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key]) el.innerHTML = t[key];
   });
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (t[key]) el.placeholder = t[key];
+  });
 
-  function openVideo(title) {
-    alert('Demo: "' + title + '"\n\nReplace with your actual YouTube or Vimeo embed link.');
+  // Update title
+  document.title = lang === 'de'
+    ? 'CX Fusion – Redaktionssystem für modernes Publishing'
+    : 'CX Fusion – Editorial System for Modern Publishing';
+}
+
+// ===== EMAIL SUBMIT =====
+const leads = JSON.parse(localStorage.getItem('cx_leads') || '[]');
+
+function submitEmail(inputId, successId) {
+  const input = document.getElementById(inputId);
+  const email = input.value.trim();
+  const t = i18n[currentLang];
+
+  if (!email || !email.includes('@')) {
+    input.style.borderColor = '#ff4444';
+    setTimeout(() => input.style.borderColor = '', 1000);
+    return;
   }
 
-  function calcUpdate() {
-    const editors = parseInt(document.getElementById('editors').value);
-    const rate = parseInt(document.getElementById('rate').value);
-    const hours = parseInt(document.getElementById('hours').value);
-    const automation = parseInt(document.getElementById('automation').value);
-    document.getElementById('editorsVal').textContent = editors;
-    document.getElementById('rateVal').textContent = '€' + rate;
-    document.getElementById('hoursVal').textContent = hours + 'h';
-    document.getElementById('automationVal').textContent = automation + '%';
-    const hoursPerYear = editors * hours * 48;
-    const savings = hoursPerYear * rate * 0.65;
-    const layoutGain = Math.min(75 - automation, 65);
-    const roi = Math.round((savings / (editors * 200)) * 100);
-    document.getElementById('timeSaved').textContent = hoursPerYear.toLocaleString('de-DE') + ' h';
-    document.getElementById('costSaved').textContent = '€' + Math.round(savings).toLocaleString('de-DE');
-    document.getElementById('layoutGain').textContent = '+' + layoutGain + '%';
-    document.getElementById('roi').textContent = roi + '%';
-  }
-  calcUpdate();
+  // Save lead
+  const lead = {
+    email,
+    date: new Date().toISOString(),
+    lang: currentLang,
+    source: inputId === 'hero-email' ? 'hero' : 'bottom'
+  };
+  leads.push(lead);
+  localStorage.setItem('cx_leads', JSON.stringify(leads));
+
+  // Show success
+  input.value = '';
+  const msg = document.getElementById(successId);
+  msg.innerHTML = t.success_msg;
+  msg.classList.add('show');
+  setTimeout(() => msg.classList.remove('show'), 5000);
+}
+
+// ===== FAQ =====
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+// ===== SCROLL REVEAL =====
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ===== TRACK PAGE VIEWS =====
+const views = JSON.parse(localStorage.getItem('cx_views') || '[]');
+views.push({ date: new Date().toISOString(), referrer: document.referrer || 'direct' });
+localStorage.setItem('cx_views', JSON.stringify(views));
 </script>
 </body>
 </html>
